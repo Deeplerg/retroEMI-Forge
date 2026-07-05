@@ -1,6 +1,6 @@
 plugins {
+    id 'antlr'
     id 'com.gtnewhorizons.gtnhconvention'
-    id 'com.gtnewhorizons.retrofuturagradle'
 }
 
 group = modGroup
@@ -27,12 +27,12 @@ tasks.processResources.configure {
     }
 }
 
-repositories {
-    maven {
-        name = "GTNH Maven"
-        url = uri("https://nexus.gtnewhorizons.com/repository/public/")
-    }
-}
+//repositories {
+//    maven {
+//        name = "GTNH Maven"
+//        url = uri("https://nexus.gtnewhorizons.com/repository/public/")
+//    }
+//}
 
 allprojects {
     base.archivesName = project.modId
