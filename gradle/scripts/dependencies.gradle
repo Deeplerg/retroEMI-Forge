@@ -25,6 +25,10 @@ repositories {
             includeGroup 'maven.modrinth'
         }
     }
+    maven {
+        name = "Spongepowered"
+        url = "https://repo.spongepowered.org/repository/maven-public/"
+    }
     mavenLocal() // Must be last for caching to work
 }
 
@@ -59,5 +63,8 @@ dependencies {
     // implementation ('com.google.code.gson:gson:2.8.6') {
     //     transitive = false
     // }
-
+    compileOnly('org.jetbrains:annotations:26.1.0')
+    compileOnly('org.jspecify:jspecify:1.0.0')
+    implementation('org.joml:joml:1.10.8')
+//    implementation('it.unimi.dsi:fastutil:8.5.18')
 }

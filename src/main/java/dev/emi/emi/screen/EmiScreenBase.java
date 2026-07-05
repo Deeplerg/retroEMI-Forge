@@ -3,6 +3,7 @@ package dev.emi.emi.screen;
 import com.google.common.collect.Lists;
 import dev.emi.emi.api.EmiScreenBoundsProvider;
 import dev.emi.emi.api.widget.Bounds;
+import dev.emi.emi.mixin.accessor.GuiRecipeBookAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -84,7 +85,7 @@ public class EmiScreenBase {
 			if (hs.inventorySlots.inventorySlots != null && !hs.inventorySlots.inventorySlots.isEmpty()) {
 				int extra = 0;
 				if (screen instanceof IRecipeShownListener provider) {
-					if (provider.func_194310_f().recipeBook != null && provider.func_194310_f().isVisible()) {
+					if (((GuiRecipeBookAccessor) provider.func_194310_f()).getRecipeBook() != null && provider.func_194310_f().isVisible()) {
 						extra = 177;
 					}
 				}

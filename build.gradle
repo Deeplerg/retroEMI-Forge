@@ -113,14 +113,6 @@ repositories {
         name 'CleanroomMC Maven'
         url 'https://maven.cleanroommc.com'
     }
-//    maven {
-//        name 'GTNH Maven'
-//        url 'https://maven.gtnewhorizons.com/'
-//    }
-    maven {
-        name = "Spongepowered"
-        url = "https://repo.spongepowered.org/repository/maven-public/"
-    }
 }
 
 dependencies {
@@ -154,10 +146,6 @@ dependencies {
             transitive = false
         }
     }
-    compileOnly('org.jetbrains:annotations:26.1.0')
-    compileOnly('org.jspecify:jspecify:1.0.0')
-    implementation('org.joml:joml:1.10.8')
-//    implementation('it.unimi.dsi:fastutil:8.5.18')
 }
 
 apply from: 'gradle/scripts/dependencies.gradle'
@@ -165,7 +153,7 @@ apply from: 'gradle/scripts/dependencies.gradle'
 // Adds Access Transformer files to tasks
 if (propertyBool('use_access_transformer')) {
     for (def location : propertyStringList('access_transformer_locations')) {
-        def fileLocation = file("${projectDir}/src/main/resources/${location}")
+        def fileLocation = file("${projectDir}/src/main/resources/emi_at.cfg")
         if (fileLocation.exists()) {
             tasks.deobfuscateMergedJarToSrg.accessTransformerFiles.from(fileLocation)
             tasks.srgifyBinpatchedJar.accessTransformerFiles.from(fileLocation)
@@ -354,6 +342,9 @@ idea.project.settings {
     taskTriggers {
         afterSync 'cleanroomAfterSync'
     }
+}
+
+tasks.register('generateTemplates') {
 }
 
 apply from: 'gradle/scripts/publishing.gradle'

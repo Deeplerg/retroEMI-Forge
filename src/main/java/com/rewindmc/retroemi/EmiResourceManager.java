@@ -12,6 +12,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import dev.emi.emi.EmiPort;
+import dev.emi.emi.mixin.accessor.AbstractResourcePackAccessor;
+import dev.emi.emi.mixin.accessor.FallbackResourceManagerAccessor;
+import dev.emi.emi.mixin.accessor.LegacyV2AdapterAccessor;
+import dev.emi.emi.mixin.accessor.SimpleReloadableResourceManagerAccessor;
 import dev.emi.emi.platform.forge.EmiClientForge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.FallbackResourceManager;
@@ -19,7 +23,6 @@ import net.minecraft.client.resources.FileResourcePack;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.client.resources.LegacyV2Adapter;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.resource.IResourceType;
@@ -45,18 +48,18 @@ public class EmiResourceManager implements ISelectiveResourceReloadListener {
 		if (!(manager instanceof SimpleReloadableResourceManager srm)) {
 			return result;
 		}
-		for (Map.Entry<String, ?> entry : srm.domainResourceManagers.entrySet()) {
+		for (Map.Entry<String, ?> entry : ((SimpleReloadableResourceManagerAccessor) srm).getDomainResourceManagers().entrySet()) {
 			String namespace = entry.getKey();
 			if (!(entry.getValue() instanceof FallbackResourceManager frm)) {
 				continue;
 			}
 			String assetPrefix = String.format("assets/%s/", namespace);
-			for (IResourcePack pack : frm.resourcePacks) {
-				if (pack instanceof LegacyV2Adapter adapter) {
+			for (IResourcePack pack : ((FallbackResourceManagerAccessor) frm).getResourcePacks()) {
+				if (pack instanceof LegacyV2AdapterAccessor adapter) {
 					pack = adapter.getUnadaptedPack();
 				}
 				if (pack instanceof FileResourcePack frp) {
-					try (ZipFile zip = frp.getResourcePackZipFile()) {
+					try (ZipFile zip = new ZipFile(((AbstractResourcePackAccessor) frp).getResourcePackFile())) {
 						Stream<String> relativePaths = zip.stream()
 							.filter(ze -> !ze.isDirectory())
 							.map(ZipEntry::getName)
@@ -66,7 +69,7 @@ public class EmiResourceManager implements ISelectiveResourceReloadListener {
 					} catch (IOException ignored) {
 					}
 				} else if (pack instanceof FMLFolderResourcePack ffrp) { // For dev environment
-					Path assets = ffrp.resourcePackFile.toPath().resolve(assetPrefix);
+					Path assets = ((AbstractResourcePackAccessor) ffrp).getResourcePackFile().toPath().resolve(assetPrefix);
 					if (!Files.isDirectory(assets)) {
 						continue;
 					}

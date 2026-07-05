@@ -15,10 +15,15 @@
     "LocaleMixin",
     "NetHandlerPlayClientMixin",
     "SlotCraftingMixin",
+    "accessor.AbstractResourcePackAccessor",
+    "accessor.FallbackResourceManagerAccessor",
     "accessor.FontRendererAccessor",
     "accessor.GuiContainerAccessor",
+    "accessor.GuiRecipeBookAccessor",
     "accessor.GuiTextFieldAccessor",
-    "accessor.RenderItemAccessor"
+    "accessor.RenderItemAccessor",
+    "accessor.LegacyV2AdapterAccessor",
+    "accessor.SimpleReloadableResourceManagerAccessor"
   ],
   "mixins": [
     "accessor.InventoryCraftingAccessor",

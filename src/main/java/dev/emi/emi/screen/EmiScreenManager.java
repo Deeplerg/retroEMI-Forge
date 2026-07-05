@@ -43,7 +43,7 @@ import dev.emi.emi.config.SidebarTheme;
 import dev.emi.emi.config.SidebarType;
 import dev.emi.emi.input.EmiBind;
 import dev.emi.emi.input.EmiInput;
-import dev.emi.emi.mixin.accessor.GuiTextFieldAccessor;
+import dev.emi.emi.mixin.accessor.PlayerControllerMPAccessor;
 import dev.emi.emi.network.CreateItemC2SPacket;
 import dev.emi.emi.network.EmiNetwork;
 import dev.emi.emi.platform.EmiClient;
@@ -1377,7 +1377,7 @@ public class EmiScreenManager {
 					command += " " + nbt;
 				}
 				if (command.length() < 256) {
-					client.playerController.connection.sendPacket(new CPacketChatMessage(command));
+                    ((PlayerControllerMPAccessor) client.playerController).getNetClientHandler().sendPacket(new CPacketChatMessage(command));
 					return true;
 				}
 			}
