@@ -6,13 +6,15 @@ import dev.emi.emi.platform.EmiAgnos;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectFunction;
 import shim.net.minecraft.text.Text;
 
+import java.util.function.Function;
+
 public enum FluidUnit implements ConfigEnum {
 	LITERS("liters", a -> EmiPort.translatable("emi.fluid.amount.liters",
 		EmiRenderHelper.TEXT_FORMAT.format((int) (a / literDivisor())))),
 	MILLIBUCKETS("millibuckets", a -> EmiPort.translatable("emi.fluid.amount.millibuckets",
 		EmiRenderHelper.TEXT_FORMAT.format((int) (a / literDivisor())))),
 	DROPLETS("droplets", a -> EmiPort.translatable("emi.fluid.amount.droplets",
-		EmiRenderHelper.TEXT_FORMAT.format((int) a))),
+		EmiRenderHelper.TEXT_FORMAT.format((int) (double)  a))),
 	;
 
 	public static final int BUCKET = EmiAgnos.isForge() ? 1000 : 81_000;
@@ -20,9 +22,9 @@ public enum FluidUnit implements ConfigEnum {
 
 	private final String name;
 	private final Text translation;
-	private final Double2ObjectFunction<Text> translator;
+	private final Function<Double, Text> translator;
 
-	private FluidUnit(String name, Double2ObjectFunction<Text> translator) {
+	private FluidUnit(String name, Function<Double, Text> translator) {
 		this.name = name;
 		translation = EmiPort.translatable("emi.unit." + name);
 		this.translator = translator;

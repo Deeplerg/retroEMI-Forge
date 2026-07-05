@@ -19,11 +19,7 @@ boolean propertyBool(String key) {
 }
 
 Collection<String> propertyStringList(String key) {
-    return propertyStringList(key, ' ')
-}
-
-Collection<String> propertyStringList(String key, String delimit) {
-    return propertyString(key).split(delimit).findAll { !it.isBlank() }
+    return propertyString(key).split(' ').findAll { !it.isEmpty() }
 }
 
 private Object $property(String key) {

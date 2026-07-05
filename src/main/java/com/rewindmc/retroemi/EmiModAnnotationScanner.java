@@ -8,8 +8,10 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.JarURLConnection;
@@ -33,7 +35,7 @@ public class EmiModAnnotationScanner {
 					while (entries.hasMoreElements()) {
 						JarEntry entry = entries.nextElement();
 						if (entry.getName().endsWith(".class")) {
-							processClassBytes(jarFile.getInputStream(entry).readAllBytes(), aName, loader, aClasses);
+							processClassBytes(readAllBytes(jarFile.getInputStream(entry)), aName, loader, aClasses);
 						}
 					}
 				}
@@ -55,10 +57,20 @@ public class EmiModAnnotationScanner {
 				scanDir(root, f, loader, aName, out);
 			} else if (f.getName().endsWith(".class")) {
 				try (InputStream is = new FileInputStream(f)) {
-					processClassBytes(is.readAllBytes(), aName, loader, out);
+					processClassBytes(readAllBytes(is), aName, loader, out);
 				} catch (Exception ignored) {}
 			}
 		}
+	}
+
+	private static byte[] readAllBytes(InputStream is) throws IOException {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		byte[] data = new byte[8192];
+		int n;
+		while ((n = is.read(data, 0, data.length)) != -1) {
+			buffer.write(data, 0, n);
+		}
+		return buffer.toByteArray();
 	}
 
 	private static void processClassBytes(byte[] bytes, String aName, ClassLoader loader, List<Class<?>> out) {

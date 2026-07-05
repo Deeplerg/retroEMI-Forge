@@ -17,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class EmiBannerDuplicateRecipe extends EmiPatternCraftingRecipe {
 
-	public static final List<ItemStack> BANNERS = List.of(
+	public static final List<ItemStack> BANNERS = shim.java.List.of(
 			new ItemStack(Items.BANNER, 1, 0), new ItemStack(Items.BANNER, 1, 1), new ItemStack(Items.BANNER, 1, 2), new ItemStack(Items.BANNER, 1, 3),
 			new ItemStack(Items.BANNER, 1, 4), new ItemStack(Items.BANNER, 1, 5), new ItemStack(Items.BANNER, 1, 6), new ItemStack(Items.BANNER, 1, 7),
 			new ItemStack(Items.BANNER, 1, 8), new ItemStack(Items.BANNER, 1, 9), new ItemStack(Items.BANNER, 1, 10), new ItemStack(Items.BANNER, 1, 11),
@@ -27,7 +27,7 @@ public class EmiBannerDuplicateRecipe extends EmiPatternCraftingRecipe {
 	private final ItemStack banner;
 
 	public EmiBannerDuplicateRecipe(ItemStack banner, ResourceLocation id) {
-		super(List.of(
+		super(shim.java.List.of(
 				EmiStack.of(banner),
 				EmiStack.of(banner).setRemainder(EmiStack.of(banner))),
 				EmiStack.of(banner), id);

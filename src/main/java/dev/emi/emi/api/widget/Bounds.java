@@ -1,5 +1,8 @@
 package dev.emi.emi.api.widget;
 
+import com.github.bsideup.jabel.Desugar;
+
+@Desugar
 public record Bounds(int x, int y, int width, int height) {
 	public static final Bounds EMPTY = new Bounds(0, 0, 0, 0);
 

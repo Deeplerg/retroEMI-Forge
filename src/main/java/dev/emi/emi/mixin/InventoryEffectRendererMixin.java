@@ -58,7 +58,7 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 		method = "drawActivePotionEffects", ordinal = 0)
 	private Collection<PotionEffect> drawStatusEffects(Collection<PotionEffect> original) {
 		if (EmiConfig.effectLocation == EffectLocation.TOP || EmiConfig.effectLocation == EffectLocation.HIDDEN) {
-			return List.of();
+			return shim.java.List.of();
 		}
 		return original;
 	}
@@ -112,12 +112,12 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 			this.ySize = restoreY;
 		}
 		if (hovered != null && size > 1) {
-			List<Text> list = List.of(Text.translatable(hovered.getEffectName()).append(Text.literal(REMIMixinHooks.getPotionAmplifier(hovered))), Text.literal(Potion.getPotionDurationString(hovered, 1.0F)));
+			List<Text> list = shim.java.List.of(Text.translatable(hovered.getEffectName()).append(Text.literal(REMIMixinHooks.getPotionAmplifier(hovered))), Text.literal(Potion.getPotionDurationString(hovered, 1.0F)));
 			context.raw().drawTooltip(mc.fontRenderer, list, mouseX, Math.max(mouseY, 16));
 		}
 	}
 
-	@WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/potion/Potion;shouldRenderInvText(Lnet/minecraft/potion/PotionEffect;)Z"),
+	@WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/potion/Potion;shouldRenderInvText(Lnet/minecraft/potion/PotionEffect;)Z", remap = false),
 		method = "drawActivePotionEffects")
 	private boolean squishEffects(Potion instance, PotionEffect effect, Operation<Boolean> original) {
 		return !EmiConfig.effectLocation.compressed;
@@ -163,7 +163,7 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 				}
 			}
 			if (hovered != null && effects.size() > 1) {
-				List<Text> list = List.of(Text.translatable(hovered.getEffectName()).append(Text.literal(REMIMixinHooks.getPotionAmplifier(hovered))), Text.literal(Potion.getPotionDurationString(hovered, 1.0F)));
+				List<Text> list = shim.java.List.of(Text.translatable(hovered.getEffectName()).append(Text.literal(REMIMixinHooks.getPotionAmplifier(hovered))), Text.literal(Potion.getPotionDurationString(hovered, 1.0F)));
 				context.raw().drawTooltip(mc.fontRenderer, list, mouseX, Math.max(mouseY, 16));
 			}
 		}

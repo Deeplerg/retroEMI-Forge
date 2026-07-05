@@ -46,7 +46,7 @@ public class EmiShapedOreRecipe extends EmiCraftingRecipe {
             if (list.isEmpty()) {
                 return EmiStack.EMPTY;
             } else {
-                if (list.getFirst() instanceof ItemStack) {
+                if (list.get(0) instanceof ItemStack) {
                     return EmiIngredient.of(streamForgeList(list).map(stack -> (ItemStack) stack).map(EmiStack::ofPotentialTag).collect(Collectors.toList()));
                 }
             }

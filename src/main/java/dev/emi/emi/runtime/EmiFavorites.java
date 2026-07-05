@@ -207,7 +207,7 @@ public class EmiFavorites {
 			boolean hasSomething = false;
 			for (Object2LongMap.Entry<EmiRecipe> entry : batches.object2LongEntrySet()) {
 				EmiRecipe recipe = entry.getKey();
-				long amount = amounts.getOrDefault(recipe, 0);
+				long amount = amounts.getOrDefault(recipe, 0L);
 				long batch = entry.getLongValue();
 				if (amount == 0) {
 					continue;

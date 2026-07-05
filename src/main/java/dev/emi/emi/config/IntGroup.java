@@ -12,9 +12,9 @@ public class IntGroup {
 	public final String baseTranslation;
 	public final int size;
 	public final List<String> names;
-	public final IntList values;
+	public final List<Integer> values;
 
-	public IntGroup(String baseTranslation, List<String> names, IntList values) {
+	public IntGroup(String baseTranslation, List<String> names, List values) {
 		this.baseTranslation = baseTranslation;
 		this.size = names.size();
 		this.names = names;
@@ -27,14 +27,14 @@ public class IntGroup {
 	}
 
 	public String serialize() {
-		return values.intStream().mapToObj(i -> "" + i).collect(Collectors.joining(", "));
+		return values.stream().map(i -> "" + i).collect(Collectors.joining(", "));
 	}
 
 	public void deserialize(String text) {
 		String[] parts = text.split(",");
 		if (parts.length == size) {
 			for (int i = 0; i < size; i++) {
-				values.set(i, Integer.parseInt(parts[i].strip()));
+				values.set(i, Integer.parseInt(parts[i].trim()));
 			}
 		}
 	}

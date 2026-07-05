@@ -1,5 +1,6 @@
 package shim.net.minecraft.registry.tag;
 
+import com.github.bsideup.jabel.Desugar;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
@@ -28,6 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Desugar
 public record TagKey<T>(ResourceLocation tag, Type type) {
     private static final Interner<TagKey<?>> INTERNER = Interners.newWeakInterner();
 

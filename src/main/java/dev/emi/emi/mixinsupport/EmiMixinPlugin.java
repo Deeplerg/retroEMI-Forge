@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.github.bsideup.jabel.Desugar;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -178,6 +179,7 @@ public class EmiMixinPlugin implements IMixinConfigPlugin {
 		}
 	}
 
+	@Desugar
 	private static record InvokeTargetInfo(String owner, String name, int type, String desc) {
 	}
 

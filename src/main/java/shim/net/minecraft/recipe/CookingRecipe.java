@@ -34,6 +34,6 @@ public class CookingRecipe {
 	}
 
 	public ResourceLocation getId() {
-		return EmiPort.id("emi", "/furnace/" + EmiUtil.subId(this.getIngredients().getEmiStacks().getFirst().getItemStack()) + "/" + EmiUtil.subId(this.getOutput()));
+		return EmiPort.id("emi", "/furnace/" + EmiUtil.subId(this.getIngredients().getEmiStacks().get(0).getItemStack()) + "/" + EmiUtil.subId(this.getOutput()));
 	}
 }

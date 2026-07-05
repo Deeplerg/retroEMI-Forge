@@ -19,7 +19,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 
 public class EmiBannerShieldRecipe extends EmiPatternCraftingRecipe {
-	public static final List<EmiStack> BANNERS = List.of(
+	public static final List<EmiStack> BANNERS = shim.java.List.of(
 		EmiStack.of(Items.BANNER, 1, 0), EmiStack.of(Items.BANNER, 1, 1), EmiStack.of(Items.BANNER, 1, 2), EmiStack.of(Items.BANNER, 1, 3),
 		EmiStack.of(Items.BANNER, 1, 4), EmiStack.of(Items.BANNER, 1, 5), EmiStack.of(Items.BANNER, 1, 6), EmiStack.of(Items.BANNER, 1, 7),
 		EmiStack.of(Items.BANNER, 1, 8), EmiStack.of(Items.BANNER, 1, 9), EmiStack.of(Items.BANNER, 1, 10), EmiStack.of(Items.BANNER, 1, 11),
@@ -30,7 +30,7 @@ public class EmiBannerShieldRecipe extends EmiPatternCraftingRecipe {
 
 	@SuppressWarnings("unchecked")
 	public EmiBannerShieldRecipe(ResourceLocation id) {
-		super((List<EmiIngredient>) (List<?>) Stream.concat(Stream.of(SHIELD), EMI_BANNERS.stream()).toList(), EmiStack.of(Items.SHIELD), id);
+		super((List<EmiIngredient>) (List<?>) Stream.concat(Stream.of(SHIELD), EMI_BANNERS.stream()).collect(Collectors.toList()), EmiStack.of(Items.SHIELD), id);
 	}
 
 	@Override

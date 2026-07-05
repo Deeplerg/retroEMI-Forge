@@ -1,7 +1,10 @@
 package dev.emi.emi.util;
 
+import com.github.bsideup.jabel.Desugar;
+
 import java.util.Map;
 
+@Desugar
 public record InheritanceMap<V>(Map<Class<?>, V> map) {
 
 	public Class<?> getKey(Class<?> clazz) {

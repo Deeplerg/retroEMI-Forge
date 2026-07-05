@@ -147,7 +147,7 @@ public class EmiPlayerInventory {
 				long desired = stack.getAmount();
 				if (inventory.containsKey(stack)) {
 					EmiStack identity = inventory.get(stack);
-					long alreadyUsed = used.getOrDefault(identity, 0);
+					long alreadyUsed = used.getOrDefault(identity, 0L);
 					long available = identity.getAmount() - alreadyUsed;
 					if (available >= desired) {
 						used.put(identity, desired + alreadyUsed);
@@ -176,7 +176,7 @@ public class EmiPlayerInventory {
 				long desired = stack.getAmount() * amount;
 				if (inventory.containsKey(stack)) {
 					EmiStack identity = inventory.get(stack);
-					long alreadyUsed = used.getOrDefault(identity, 0);
+					long alreadyUsed = used.getOrDefault(identity, 0L);
 					long available = identity.getAmount() - alreadyUsed;
 					if (available >= desired) {
 						used.put(identity, desired + alreadyUsed);

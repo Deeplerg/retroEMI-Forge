@@ -98,7 +98,7 @@ public interface EmiIngredient extends EmiRenderable {
 		if (ingredient == null || ingredient == Ingredient.EMPTY) {
 			return EmiStack.EMPTY;
 		}
-		return EmiTags.getIngredient(Item.class, Arrays.stream(ingredient.getMatchingStacks()).map(EmiStack::of).toList(), amount);
+		return EmiTags.getIngredient(Item.class, Arrays.stream(ingredient.getMatchingStacks()).map(EmiStack::of).collect(Collectors.toList()), amount);
 	}
 
 	public static EmiIngredient of(List<? extends EmiIngredient> list) {

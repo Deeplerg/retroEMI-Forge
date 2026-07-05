@@ -1,7 +1,9 @@
 package shim.net.minecraft.client.render;
 
+import com.github.bsideup.jabel.Desugar;
 import net.minecraft.client.renderer.BufferBuilder;
 
+@Desugar
 public record BufferBuilderConsumer(BufferBuilder builder) implements VertexConsumer {
 
     @Override

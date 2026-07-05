@@ -2,4 +2,20 @@
 // This file is automatically applied after build.gradle + dependencies.gradle is ran
 
 // If you wish to use the default helper methods, uncomment the line below
-// apply from: 'gradle/scripts/helpers.gradle'
+apply from: 'gradle/scripts/helpers.gradle'
+
+base {
+    archivesName.set(propertyString('mod_artifact_name')) // Consistency
+}
+
+tasks.named('jar', Jar) {
+    from sourceSets.api.output
+}
+
+tasks.named('sourcesJar', Jar) {
+    from sourceSets.api.allSource
+}
+
+// tasks.named('javadocJar', Jar) {
+   // from sourceSets.api.output
+// }

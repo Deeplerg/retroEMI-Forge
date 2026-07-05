@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import com.github.bsideup.jabel.Desugar;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
@@ -88,11 +89,11 @@ public class RecipeDefaults {
 		return map;
 	}
 
-
+	@Desugar
 	public static record Resolution(ResourceLocation recipe, List<JsonElement> stacks) {
 	}
 
-
+	@Desugar
 	public static record Tag(JsonElement tag, JsonElement stack) {
 	}
 }

@@ -1,9 +1,11 @@
 package shim.net.minecraft.item;
 
+import com.github.bsideup.jabel.Desugar;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
+@Desugar
 public record DyeItem(EnumDyeColor color) {
 
 	public ItemStack toStack() {

@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.github.bsideup.jabel.Desugar;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -254,6 +255,7 @@ public class EmiWorldInteractionRecipe implements EmiRecipe {
 		}
 	}
 
+	@Desugar
 	private static record WorldIngredient(EmiIngredient stack, boolean catalyst, Function<SlotWidget, SlotWidget> mutator) {
 	}
 }

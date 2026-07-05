@@ -25,7 +25,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.resource.IResourceType;
 import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 public class EmiResourceManager implements ISelectiveResourceReloadListener {
@@ -57,7 +56,7 @@ public class EmiResourceManager implements ISelectiveResourceReloadListener {
 					pack = adapter.getUnadaptedPack();
 				}
 				if (pack instanceof FileResourcePack frp) {
-					try (ZipFile zip = new ZipFile(frp.getResourcePackFile())) {
+					try (ZipFile zip = frp.getResourcePackZipFile()) {
 						Stream<String> relativePaths = zip.stream()
 							.filter(ze -> !ze.isDirectory())
 							.map(ZipEntry::getName)
@@ -67,7 +66,7 @@ public class EmiResourceManager implements ISelectiveResourceReloadListener {
 					} catch (IOException ignored) {
 					}
 				} else if (pack instanceof FMLFolderResourcePack ffrp) { // For dev environment
-					Path assets = ffrp.getResourcePackFile().toPath().resolve(assetPrefix);
+					Path assets = ffrp.resourcePackFile.toPath().resolve(assetPrefix);
 					if (!Files.isDirectory(assets)) {
 						continue;
 					}

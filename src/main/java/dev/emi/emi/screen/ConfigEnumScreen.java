@@ -3,6 +3,7 @@ package dev.emi.emi.screen;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.github.bsideup.jabel.Desugar;
 import shim.org.lwjgl.glfw.GLFW;
 
 import com.rewindmc.retroemi.REMIScreen;
@@ -81,6 +82,7 @@ public class ConfigEnumScreen<T> extends REMIScreen {
 		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 
+	@Desugar
 	public static record Entry<T>(T value, Text name, List<TooltipComponent> tooltip) {
 	}
 

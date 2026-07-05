@@ -211,7 +211,8 @@ public class RetroEMI {
 				}
 				int dwheel = Mouse.getEventDWheel();
 				if (dwheel != 0) {
-					if (EmiScreenManager.mouseScrolled(mx, my, dwheel)) {
+					// If it is lwjgl3, dividing by 120D is not necessary
+					if (EmiScreenManager.mouseScrolled(mx, my, dwheel / 120D)) {
 						return true;
 					}
 				}
@@ -292,7 +293,7 @@ public class RetroEMI {
 		List<String> rawTip = stack.getTooltip(Minecraft.getMinecraft().player, type);
 		List<Text> tip = rawTip.stream().map(Text::literal).map(t -> t.formatted(Formatting.GRAY)).collect(Collectors.toList());
 		if (!tip.isEmpty()) {
-			tip.set(0, ((MutableText) tip.getFirst()).formatted(Formatting.byName(stack.getItem().getForgeRarity(stack).getColor().name())));
+			tip.set(0, ((MutableText) tip.get(0)).formatted(Formatting.byName(stack.getItem().getForgeRarity(stack).getColor().name())));
 		}
 		return tip;
 	}

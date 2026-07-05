@@ -260,7 +260,7 @@ public class VanillaPlugin implements EmiPlugin {
 		registry.setDefaultComparison(Items.TIPPED_ARROW, potionComparison);
 		registry.setDefaultComparison(Items.ENCHANTED_BOOK, EmiPort.compareStrict());
 
-		Set<Item> hiddenItems = Set.of();
+		Set<Item> hiddenItems = shim.java.Set.of();
 //            Stream.concat(
 //			EmiTagKey.of(TagKey.Type.ITEM, EmiTags.HIDDEN_FROM_RECIPE_VIEWERS).getAll().stream().map(itemKey -> ((ItemKey) itemKey).item()),
 //			EmiPort.getDisabledItems()
@@ -296,7 +296,7 @@ public class VanillaPlugin implements EmiPlugin {
 					DyeItem dyeItem = DyeItem.byColor(dye);
 					ResourceLocation sid = synthetic("crafting/shulker_box_dying", EmiUtil.subId(dyeItem));
 					addRecipeSafe(registry, () -> new EmiCraftingRecipe(
-						List.of(EmiStack.of(Blocks.PURPLE_SHULKER_BOX), EmiStack.of(dyeItem)),
+						shim.java.List.of(EmiStack.of(Blocks.PURPLE_SHULKER_BOX), EmiStack.of(dyeItem)),
 						EmiStack.of(BlockShulkerBox.getColoredItemStack(dye)), sid), recipe);
 				}
 			} else if (recipe instanceof ShieldRecipes.Decoration shield) {
@@ -309,7 +309,7 @@ public class VanillaPlugin implements EmiPlugin {
 						return;
 					}
 					EmiStack arrow = EmiStack.of(Items.ARROW);
-					addRecipeSafe(registry, () -> new EmiCraftingRecipe(List.of(
+					addRecipeSafe(registry, () -> new EmiCraftingRecipe(shim.java.List.of(
 							arrow, arrow, arrow, arrow,
 							EmiStack.of(EmiPort.setPotion(new ItemStack(Items.LINGERING_POTION), entry)),
 							arrow, arrow, arrow, arrow
@@ -342,7 +342,7 @@ public class VanillaPlugin implements EmiPlugin {
 						boolean shapeless = recipe.canFit(1, recipe.getIngredients().size()) && recipe.canFit(recipe.getIngredients().size(), 1);
 						List<EmiIngredient> input;
 						if (shapeless) {
-							input = recipe.getIngredients().stream().map(EmiIngredient::of).toList();
+							input = recipe.getIngredients().stream().map(EmiIngredient::of).collect(Collectors.toList());
 						} else {
 							int width = recipe.canFit(2, 3) ? recipe.canFit(1, 3) ? 1 : 2 : 3;
 							input = Lists.newArrayList();
@@ -367,7 +367,7 @@ public class VanillaPlugin implements EmiPlugin {
 		//Smelting recipes are compressed so things like charcoal don't get split, and they are missing tag support like fuel recipes
 		Map<ItemKey, ItemKey> smeltingRecipes = new HashMap<>();
 		FurnaceRecipes.instance().getSmeltingList().forEach((in, out) -> {
-			for (ItemStack stack : EmiStack.ofPotentialTag(in).getEmiStacks().stream().map(EmiStack::getItemStack).toList()) {
+			for (ItemStack stack : EmiStack.ofPotentialTag(in).getEmiStacks().stream().map(EmiStack::getItemStack).collect(Collectors.toList())) {
 				if (smeltingRecipes.put(ItemKey.of(stack), ItemKey.of(out)) != null) {
 					throw new IllegalArgumentException("Duplicate smelting recipe: " + in + "=" + out);
 				}
@@ -492,7 +492,7 @@ public class VanillaPlugin implements EmiPlugin {
 		addConcreteRecipe(registry, new ItemStack(Blocks.CONCRETE_POWDER, 1, EnumDyeColor.BLACK.getDyeDamage()), concreteWater, new ItemStack(Blocks.CONCRETE, 1, EnumDyeColor.BLACK.getDyeDamage()));
 
 		EmiIngredient hoes = damagedTool(findIngredientByClass(ItemHoe.class, EmiStack.of(Items.IRON_HOE)), 1);
-		Map<ItemStack, EmiStack> tillingActions = Map.of(
+		Map<ItemStack, EmiStack> tillingActions = shim.java.Map.of(
 			new ItemStack(Blocks.DIRT), EmiStack.of(Blocks.FARMLAND),
 			new ItemStack(Blocks.GRASS), EmiStack.of(Blocks.FARMLAND),
 			new ItemStack(Blocks.DIRT, 1, BlockDirt.DirtType.COARSE_DIRT.getMetadata()), EmiStack.of(Blocks.DIRT)

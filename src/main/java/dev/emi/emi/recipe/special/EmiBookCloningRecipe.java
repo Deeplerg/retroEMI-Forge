@@ -3,6 +3,7 @@ package dev.emi.emi.recipe.special;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import dev.emi.emi.api.recipe.EmiPatternCraftingRecipe;
@@ -18,26 +19,26 @@ import net.minecraft.util.ResourceLocation;
 
 public class EmiBookCloningRecipe extends EmiPatternCraftingRecipe {
 	// TODO more book stuff
-	private static final List<String> AUTHORS = List.of(
+	private static final List<String> AUTHORS = shim.java.List.of(
 		"Emi", "A Rabbit", "[REDACTED]", "Jeb", "The Multiversal Author's Guild", "Another Book", "A Collection of Branches",
 		"Unknown"
 	);
 	private static final List<String> MOD_AUTHORS = EmiAgnos.getAllModAuthors();
 	private static final List<String> MOD = EmiAgnos.getAllModNames();
-	private static final List<String> NOUN = List.of(
+	private static final List<String> NOUN = shim.java.List.of(
 		"Bunnies", "Apples", "Rocks", "Antimemetics", "a Rabbit", "Deers", "Mice", "a Dog", "Bnuuy", "Kitties",
 		"Reconstruction", "Dawn", "Time", "Night", "the Sky",
 		"Diamonds", "Pickaxes", "Planks", "Stone", "Slime", "Creepers", "Iron", "Redstone",
 		"Trinkets", "Fungiculture", "Floralisia", "Chime", "Yttr", "Mnemonics", "Quilt"
 	);
-	private static final List<String> OBJECT = Stream.concat(List.of(
+	private static final List<String> OBJECT = Stream.concat(shim.java.List.of(
 		"Fighting Monsters"
-	).stream(), NOUN.stream()).toList();
-	private static final List<String> ADJECTIVE = List.of(
+	).stream(), NOUN.stream()).collect(Collectors.toList());
+	private static final List<String> ADJECTIVE = shim.java.List.of(
 		"Cool", "Introductory", "Diffused", "Wooden", "Slimey", "Dark", "Antimemetic", "Fun", "Fuzzy", "Tall",
 		"Rotund", "Jovial", "" // Lol blank adjective, leaving it
 	);
-	private static final List<String> IMPERATIVE = List.of(
+	private static final List<String> IMPERATIVE = shim.java.List.of(
 		"A Guide to", "Introduction to", "Discussing", "The Making of"
 	);
 	private static final List<Template> TEMPLATES = shim.java.List.of(

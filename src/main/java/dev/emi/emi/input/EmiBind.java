@@ -1,5 +1,6 @@
 package dev.emi.emi.input;
 
+import com.github.bsideup.jabel.Desugar;
 import com.google.common.collect.Lists;
 import dev.emi.emi.EmiPort;
 import shim.net.minecraft.client.util.InputUtil;
@@ -153,6 +154,7 @@ public class EmiBind {
 		updateBinds();
 	}
 
+	@Desugar
 	public static record ModifiedKey(InputUtil.Key key, int modifiers) {
 
 		public static ModifiedKey of(int code, int modifiers) {

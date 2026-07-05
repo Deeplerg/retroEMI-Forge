@@ -88,7 +88,8 @@ public class EmiMixinTransformation {
 			}
 		}
 		for (MethodNode method : clazz.methods) {
-			for (AbstractInsnNode node : method.instructions) {
+			for (int i = 0; i < method.instructions.size(); i++) {
+				AbstractInsnNode node = method.instructions.get(i);
 				if (node instanceof MethodInsnNode min) {
 					String target = min.name + min.desc;
 					if (changedMethods.containsKey(target)) {

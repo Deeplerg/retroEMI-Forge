@@ -75,7 +75,8 @@ public class REMIScreen extends GuiScreen implements ParentElement {
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 		if (Mouse.getEventDWheel() != 0) {
-			mouseScrolled(lastMouseX, lastMouseY, Mouse.getEventDWheel());
+			// If it is lwjgl3, dividing by 120D is not necessary
+			mouseScrolled(lastMouseX, lastMouseY, Mouse.getEventDWheel() / 120D);
 		}
 	}
 

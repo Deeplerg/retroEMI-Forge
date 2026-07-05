@@ -210,7 +210,7 @@ public class EmiConfig {
 	public static IntGroup leftSidebarSize = new IntGroup(
 		"emi.sidebar.size.",
 		shim.java.List.of("columns", "rows"),
-		IntList.of(12, 100)
+        shim.java.List.of(12, 100)
 	);
 
 	@Comment("How much space to maintain between the left sidebar and obstructions, in pixels")
@@ -251,7 +251,7 @@ public class EmiConfig {
 	public static IntGroup rightSidebarSize = new IntGroup(
 		"emi.sidebar.size.",
 		shim.java.List.of("columns", "rows"),
-		IntList.of(12, 100)
+        shim.java.List.of(12, 100)
 	);
 
 	@Comment("How much space to maintain between the right sidebar and obstructions, in pixels")
@@ -289,7 +289,7 @@ public class EmiConfig {
 	public static IntGroup topSidebarSize = new IntGroup(
 		"emi.sidebar.size.",
 		shim.java.List.of("columns", "rows"),
-		IntList.of(9, 9)
+        shim.java.List.of(9, 9)
 	);
 
 	@Comment("How much space to maintain between the top sidebar and obstructions, in pixels")
@@ -327,7 +327,7 @@ public class EmiConfig {
 	public static IntGroup bottomSidebarSize = new IntGroup(
 		"emi.sidebar.size.",
 		shim.java.List.of("columns", "rows"),
-		IntList.of(9, 9)
+        shim.java.List.of(9, 9)
 	);
 
 	@Comment("How much space to maintain between the bottom sidebar and obstructions, in pixels")

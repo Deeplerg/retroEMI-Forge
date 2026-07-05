@@ -169,7 +169,7 @@ public class EmiAgnosForge extends EmiAgnos {
 
 	@Override
 	protected void addBrewingRecipesAgnos(EmiRegistry registry) {
-		List<Item> potionTypes = List.of(Items.POTIONITEM, Items.SPLASH_POTION, Items.LINGERING_POTION);
+		List<Item> potionTypes = shim.java.List.of(Items.POTIONITEM, Items.SPLASH_POTION, Items.LINGERING_POTION);
 		for (IBrewingRecipe ibr : BrewingRecipeRegistry.getRecipes()) {
 			if (ibr instanceof VanillaBrewingRecipe recipe) {
 				for (Item type : potionTypes) {

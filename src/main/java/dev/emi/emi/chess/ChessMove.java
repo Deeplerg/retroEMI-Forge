@@ -1,5 +1,8 @@
 package dev.emi.emi.chess;
 
+import com.github.bsideup.jabel.Desugar;
+
+@Desugar
 record ChessMove(int start, int end, int type) {
 	private static final ChessMove[] COMPUTED = new ChessMove[64 * 64];
 

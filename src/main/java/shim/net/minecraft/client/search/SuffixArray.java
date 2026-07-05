@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -72,7 +73,7 @@ public class SuffixArray<T> {
 		int[] js = new int[i];
 		int[] ks = new int[i];
 		int[] ls = new int[i];
-		IntComparator intComparator = (ix, jx) -> js[ix] == js[jx] ? Integer.compare(ks[ix], ks[jx]) : Integer.compare(js[ix], js[jx]);
+        Comparator<Integer> intComparator = (ix, jx) -> js[ix] == js[jx] ? Integer.compare(ks[ix], ks[jx]) : Integer.compare(js[ix], js[jx]);
 		Swapper swapper = (ix, jx) -> {
 			if (ix != jx) {
 				int kx = js[ix];
@@ -100,7 +101,7 @@ public class SuffixArray<T> {
 				ks[l] = l + j < i ? is[l + j] : -2;
 			}
 
-			Arrays.quickSort(0, i, intComparator, swapper);
+			shim.it.unimi.dsi.fastutil.Arrays.quickSort(0, i, intComparator, swapper);
 
 			for(int l = 0; l < i; ++l) {
 				if (l > 0 && js[l] == js[l - 1] && ks[l] == ks[l - 1]) {
