@@ -435,7 +435,7 @@ public class ListWidget extends AbstractParentElement implements Drawable {
 				bufferBuilder.pos(q - 1, m + n + 1, 0).endVertex();
 				bufferBuilder.pos(q - 1, m - 1, 0).endVertex();
 				bufferBuilder.pos(p + 1, m - 1, 0).endVertex();
-                tessellator.draw();
+				tessellator.draw();
 			}
 			p = this.getRowLeft();
 			((Entry)entry).render(draw, j, k, p, o - 3, n, mouseX, mouseY, Objects.equals(this.hoveredEntry, entry), delta);

@@ -1377,7 +1377,7 @@ public class EmiScreenManager {
 					command += " " + nbt;
 				}
 				if (command.length() < 256) {
-                    ((PlayerControllerMPAccessor) client.playerController).getNetClientHandler().sendPacket(new CPacketChatMessage(command));
+					((PlayerControllerMPAccessor) client.playerController).getNetClientHandler().sendPacket(new CPacketChatMessage(command));
 					return true;
 				}
 			}

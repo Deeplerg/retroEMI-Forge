@@ -79,7 +79,7 @@ public class EmiData {
 										props.sort = EmiRecipeSorting.compareOutputThenInput();
 										break;
 									case "ResourceLocation":
-										props.sort = EmiRecipeSorting.ResourceLocation();
+										props.sort = EmiRecipeSorting.identifier();
 										break;
 								}
 							}

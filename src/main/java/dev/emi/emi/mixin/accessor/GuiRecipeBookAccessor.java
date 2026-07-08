@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(GuiRecipeBook.class)
 public interface GuiRecipeBookAccessor {
-    @Accessor("recipeBook")
-    RecipeBook getRecipeBook();
+	@Accessor("recipeBook")
+	RecipeBook getRecipeBook();
 }

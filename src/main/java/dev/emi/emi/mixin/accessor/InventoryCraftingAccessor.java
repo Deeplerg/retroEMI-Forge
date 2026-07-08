@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(InventoryCrafting.class)
 public interface InventoryCraftingAccessor {
-    @Accessor("inventoryWidth")
-    int getInventoryWidth();
-    @Accessor("stackList")
-    NonNullList<ItemStack> getStackList();
+	@Accessor("inventoryWidth")
+	int getInventoryWidth();
+	@Accessor("stackList")
+	NonNullList<ItemStack> getStackList();
 }

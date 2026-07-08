@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(LegacyV2Adapter.class)
 public interface LegacyV2AdapterAccessor {
-    @Accessor("pack")
-    IResourcePack getUnadaptedPack();
+	@Accessor("pack")
+	IResourcePack getUnadaptedPack();
 }

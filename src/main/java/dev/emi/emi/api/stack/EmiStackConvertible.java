@@ -26,7 +26,7 @@ public interface EmiStackConvertible {
 	 * @return The default representation of this type as an EmiStack.
 	 * Uses the provided amount.
 	 */
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	@ApiStatus.Experimental
 	default EmiStack emi(long amount) {
 		throw new IllegalStateException();

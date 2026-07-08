@@ -9,6 +9,6 @@ import java.util.List;
 
 @Mixin(FallbackResourceManager.class)
 public interface FallbackResourceManagerAccessor {
-    @Accessor("resourcePacks")
-    List<IResourcePack> getResourcePacks();
+	@Accessor("resourcePacks")
+	List<IResourcePack> getResourcePacks();
 }

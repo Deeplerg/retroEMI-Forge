@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class LocaleMixin {
 	@Shadow Map<String, String> properties;
 
-    @SuppressWarnings("deprecation")
+	@SuppressWarnings("deprecation")
 	@Inject(method = "translateKeyPrivate", at = @At(value = "HEAD"), cancellable = true)
 	private void betterTranslation(String translateKey, CallbackInfoReturnable<String> cir) {
 		String localeTranslation = this.properties.get(translateKey);

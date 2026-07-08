@@ -16,7 +16,7 @@ public class EmiRecipeSorting {
 		return NONE;
 	}
 
-	public static Comparator<EmiRecipe> ResourceLocation() {
+	public static Comparator<EmiRecipe> identifier() {
 		return (ar, br) -> {
 			ResourceLocation a = ar.getId();
 			ResourceLocation b = br.getId();

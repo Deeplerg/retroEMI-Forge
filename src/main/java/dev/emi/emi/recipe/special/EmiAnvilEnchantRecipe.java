@@ -81,18 +81,18 @@ public class EmiAnvilEnchantRecipe implements EmiRecipe {
 		return itemStack;
 	}
 
-    private EmiStack getBook() {
-        ItemStack item = new ItemStack(Items.ENCHANTED_BOOK);
-        NBTTagCompound tag = new NBTTagCompound();
-        NBTTagList StoredEnchantments = new NBTTagList();
-        NBTTagCompound enchant = new NBTTagCompound();
-        int id = getTool().getTagCompound().getTagList("ench", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(0).getInteger("id");
+	private EmiStack getBook() {
+		ItemStack item = new ItemStack(Items.ENCHANTED_BOOK);
+		NBTTagCompound tag = new NBTTagCompound();
+		NBTTagList StoredEnchantments = new NBTTagList();
+		NBTTagCompound enchant = new NBTTagCompound();
+		int id = getTool().getTagCompound().getTagList("ench", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(0).getInteger("id");
 
-        enchant.setInteger("id", id);
-        enchant.setShort("lvl", (short) level);
-        StoredEnchantments.appendTag(enchant);
-        tag.setTag("StoredEnchantments", StoredEnchantments);
-        item.setTagCompound(tag);
-        return EmiStack.of(item);
-    }
+		enchant.setInteger("id", id);
+		enchant.setShort("lvl", (short) level);
+		StoredEnchantments.appendTag(enchant);
+		tag.setTag("StoredEnchantments", StoredEnchantments);
+		item.setTagCompound(tag);
+		return EmiStack.of(item);
+	}
 }

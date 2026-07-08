@@ -6,6 +6,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(FontRenderer.class)
 public interface FontRendererAccessor {
-    @Accessor("alpha")
-    float getAlpha();
+	@Accessor("alpha")
+	float getAlpha();
 }

@@ -300,9 +300,9 @@ public class RetroEMI {
 
 	public static boolean hasFocusedTextReflectField(Object parent) {
 		// Haha, I'm in danger
-        if (parent instanceof ParentElement) {
-            return false;
-        }
+		if (parent instanceof ParentElement) {
+			return false;
+		}
 		for (java.lang.reflect.Field f : parent.getClass().getDeclaredFields()) {
 			f.setAccessible(true);
 			if (!GuiTextField.class.isAssignableFrom(f.getType())) {

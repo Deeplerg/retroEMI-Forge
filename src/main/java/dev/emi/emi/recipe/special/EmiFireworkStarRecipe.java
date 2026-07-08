@@ -25,7 +25,7 @@ public class EmiFireworkStarRecipe extends EmiPatternCraftingRecipe {
 	private static final List<DyeItem> DYES = Stream.of(EnumDyeColor.values()).map(DyeItem::byColor).collect(Collectors.toList());
 
 	private static final List<ItemStack> SHAPES =
-        shim.java.List.of(new ItemStack(Items.FIREWORK_CHARGE), new ItemStack(Items.FEATHER), new ItemStack(Items.GOLD_NUGGET), new ItemStack(Items.SKULL, 1, 0),
+		shim.java.List.of(new ItemStack(Items.FIREWORK_CHARGE), new ItemStack(Items.FEATHER), new ItemStack(Items.GOLD_NUGGET), new ItemStack(Items.SKULL, 1, 0),
 					new ItemStack(Items.SKULL, 1, 1), new ItemStack(Items.SKULL, 1, 2), new ItemStack(Items.SKULL, 1, 3), new ItemStack(Items.SKULL, 1, 4));
 
 	private static final List<Item> EFFECTS = shim.java.List.of(Items.DIAMOND, Items.GLOWSTONE_DUST);

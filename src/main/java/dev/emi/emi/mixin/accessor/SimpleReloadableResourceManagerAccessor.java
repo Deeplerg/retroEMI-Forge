@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Mixin(SimpleReloadableResourceManager.class)
 public interface SimpleReloadableResourceManagerAccessor {
-    @Accessor("domainResourceManagers")
-    Map<String, FallbackResourceManager> getDomainResourceManagers();
+	@Accessor("domainResourceManagers")
+	Map<String, FallbackResourceManager> getDomainResourceManagers();
 }
 

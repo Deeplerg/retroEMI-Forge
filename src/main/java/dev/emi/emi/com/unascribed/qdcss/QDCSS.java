@@ -436,23 +436,23 @@ public class QDCSS {
 		}
 	}
 
-    public static QDCSS load(String fileName, InputStream in) throws IOException {
-        return load(fileName, new InputStreamReader(in, StandardCharsets.UTF_8));
-    }
+	public static QDCSS load(String fileName, InputStream in) throws IOException {
+		return load(fileName, new InputStreamReader(in, StandardCharsets.UTF_8));
+	}
 
-    public static QDCSS load(String fileName, Reader r) throws IOException {
-        // i have written this driver loop too many fucking times
-        // the curse of developing for retro versions
-        StringWriter sw = new StringWriter();
-        try (r) {
-            char[] buf = new char[512];
-            while (true) {
-                int read = r.read(buf);
-                if (read < 0) break;
-                sw.write(buf, 0, read);
-            }
-        }
-        return load(fileName, sw.toString());
-    }
+	public static QDCSS load(String fileName, Reader r) throws IOException {
+		// i have written this driver loop too many fucking times
+		// the curse of developing for retro versions
+		StringWriter sw = new StringWriter();
+		try (r) {
+			char[] buf = new char[512];
+			while (true) {
+				int read = r.read(buf);
+				if (read < 0) break;
+				sw.write(buf, 0, read);
+			}
+		}
+		return load(fileName, sw.toString());
+	}
 
 }

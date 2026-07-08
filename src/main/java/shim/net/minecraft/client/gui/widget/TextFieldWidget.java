@@ -455,8 +455,8 @@ public class TextFieldWidget extends ClickableWidget implements Drawable {
 		if (x1 > this.getX() + this.width) {
 			x1 = this.getX() + this.width;
 		}
-        GlStateManager.enableColorLogic();
-        GlStateManager.colorLogicOp(GlStateManager.LogicOp.OR_REVERSE.opcode);
+		GlStateManager.enableColorLogic();
+		GlStateManager.colorLogicOp(GlStateManager.LogicOp.OR_REVERSE.opcode);
 		raw.fill(x1, y1, x2, y2, -16776961);
 		GlStateManager.disableColorLogic();
 	}
@@ -508,7 +508,7 @@ public class TextFieldWidget extends ClickableWidget implements Drawable {
 			return;
 		}
 		super.setFocused(focused);
-//        IMEHandler.setIME(focused);
+//		IMEHandler.setIME(focused);
 		if (focused) {
 			this.focusedTicks = 0;
 		}

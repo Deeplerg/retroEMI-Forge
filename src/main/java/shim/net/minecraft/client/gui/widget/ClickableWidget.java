@@ -35,8 +35,8 @@ import java.util.function.Consumer;
 public abstract class ClickableWidget extends Gui implements Drawable, Element {
 	public enum SelectionType {
 		NONE,
-        HOVERED,
-        FOCUSED
+		HOVERED,
+		FOCUSED
 	}
 
 	public static final ResourceLocation WIDGETS_TEXTURE = EmiPort.id("textures/gui/widgets.png");
@@ -123,7 +123,7 @@ public abstract class ClickableWidget extends Gui implements Drawable, Element {
 		} else if (this.isSelected()) {
 			i += hoveredVOffset;
 		}
-        RenderSystem.enableDepthTest();
+		RenderSystem.enableDepthTest();
 		EmiDrawContext.instance().drawTexture(texture, x, y, 0, u, i, width, height, textureWidth, textureHeight);
 	}
 
@@ -182,7 +182,7 @@ public abstract class ClickableWidget extends Gui implements Drawable, Element {
 	}
 
 	public void playDownSound() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
 	}
 
 	public int getWidth() {

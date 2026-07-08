@@ -33,12 +33,12 @@ public class REMILoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
 		return null;
 	}
 
-    @Override
-    public void injectData(Map<String, Object> data) {
+	@Override
+	public void injectData(Map<String, Object> data) {
 
-    }
+	}
 
-    @Override
+	@Override
 	public String getAccessTransformerClass() {
 		return null;
 	}

@@ -105,11 +105,11 @@ public class EmiPlayerInventory {
 		if (!handlers.isEmpty()) {
 			EmiCraftContext context = new EmiCraftContext(screen, this, EmiCraftContext.Type.CRAFTABLE);
 			return r -> {
-                for (EmiRecipeHandler handler : handlers) {
-                    if (handler.supportsRecipe(r)) {
-                        return handler.canCraft(r, context);
-                    }
-                }
+				for (EmiRecipeHandler handler : handlers) {
+					if (handler.supportsRecipe(r)) {
+						return handler.canCraft(r, context);
+					}
+				}
 				return false;
 			};
 		}

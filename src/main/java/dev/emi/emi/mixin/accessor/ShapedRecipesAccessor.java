@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(ShapedRecipes.class)
 public interface ShapedRecipesAccessor {
-    @Accessor("recipeWidth")
-    int getRecipeWidth();
+	@Accessor("recipeWidth")
+	int getRecipeWidth();
 
-    @Accessor("recipeHeight")
-    int getRecipeHeight();
+	@Accessor("recipeHeight")
+	int getRecipeHeight();
 
-    @Accessor("recipeItems")
-    NonNullList<Ingredient> getRecipeItems();
+	@Accessor("recipeItems")
+	NonNullList<Ingredient> getRecipeItems();
 }

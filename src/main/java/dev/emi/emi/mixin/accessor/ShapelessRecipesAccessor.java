@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(ShapelessRecipes.class)
 public interface ShapelessRecipesAccessor {
-    @Accessor("recipeItems")
-    NonNullList<Ingredient> getRecipeItems();
+	@Accessor("recipeItems")
+	NonNullList<Ingredient> getRecipeItems();
 }

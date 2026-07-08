@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(GuiContainer.class)
 public interface GuiContainerAccessor {
-    @Accessor("hoveredSlot")
-    Slot getTheSlot();
+	@Accessor("hoveredSlot")
+	Slot getTheSlot();
 }

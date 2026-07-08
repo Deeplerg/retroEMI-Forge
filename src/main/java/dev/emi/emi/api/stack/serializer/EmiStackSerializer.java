@@ -54,7 +54,7 @@ public interface EmiStackSerializer<T extends EmiStack> extends EmiIngredientSer
 //			changesJson = JsonHelper.getObject(json, "componentChanges", null);
 			amount = JsonHelper.getLong(json, "amount", 1);
 			chance = JsonHelper.getFloat(json, "chance", 1);
-            subtype = JsonHelper.getInt(json, "subtype", 0);
+			subtype = JsonHelper.getInt(json, "subtype", 0);
 			if (JsonHelper.hasElement(json, "remainder")) {
 				EmiIngredient ing = EmiIngredientSerializer.getDeserialized(json.get("remainder"));
 				if (ing instanceof EmiStack stack) {

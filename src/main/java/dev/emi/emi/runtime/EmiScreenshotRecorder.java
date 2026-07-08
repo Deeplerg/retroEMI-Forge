@@ -108,8 +108,8 @@ public class EmiScreenshotRecorder {
 		try {
 			ImageIO.write(nativeImage, "png", file);
 
-            ITextComponent text = new TextComponentString(filename)
-                .setStyle(new Style().setUnderlined(true).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath())));
+			ITextComponent text = new TextComponentString(filename)
+				.setStyle(new Style().setUnderlined(true).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath())));
 			messageReceiver.accept(new TextComponentTranslation("screenshot.success", text));
 		} catch (Throwable e) {
 			EmiLog.error("Failed to write screenshot", e);

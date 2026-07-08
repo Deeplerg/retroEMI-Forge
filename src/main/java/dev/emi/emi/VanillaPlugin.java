@@ -261,7 +261,7 @@ public class VanillaPlugin implements EmiPlugin {
 		registry.setDefaultComparison(Items.ENCHANTED_BOOK, EmiPort.compareStrict());
 
 		Set<Item> hiddenItems = shim.java.Set.of();
-//            Stream.concat(
+//			Stream.concat(
 //			EmiTagKey.of(TagKey.Type.ITEM, EmiTags.HIDDEN_FROM_RECIPE_VIEWERS).getAll().stream().map(itemKey -> ((ItemKey) itemKey).item()),
 //			EmiPort.getDisabledItems()
 //		).collect(Collectors.toSet());
@@ -418,7 +418,7 @@ public class VanillaPlugin implements EmiPlugin {
 				if (i.getMaxDamage() > 0) {
 					if (i instanceof ItemArmor ai && ai.getArmorMaterial() != null && ai.getArmorMaterial().getRepairItemStack() != null
 							&& !ai.getArmorMaterial().getRepairItemStack().isEmpty()) {
-                        ResourceLocation id = synthetic("anvil/repairing/material", EmiUtil.subId(i) + "/" + EmiUtil.subId(ai.getArmorMaterial().getRepairItemStack()));
+						ResourceLocation id = synthetic("anvil/repairing/material", EmiUtil.subId(i) + "/" + EmiUtil.subId(ai.getArmorMaterial().getRepairItemStack()));
 						addRecipeSafe(registry, () -> new EmiAnvilRecipe(EmiStack.of(i), EmiStack.of(ai.getArmorMaterial().getRepairItemStack()), id));
 					} else if (i instanceof ItemToolAccessor ti && ti.getToolMaterial().getRepairItemStack() != null
 							&& !ti.getToolMaterial().getRepairItemStack().isEmpty()) {

@@ -154,7 +154,7 @@ public class EmiTags {
 				ResourceLocation mid = EmiPort.id(id.getNamespace(), "tag/" + path);
 				EmiTags.MODELED_TAGS.put(key, mid);
 				/* '/' is illegal character in path, so we need to replace */
-                String replacement = path.replace('_', '/');
+				String replacement = path.replace('_', '/');
 				if (!replacement.equals(path)) {
 					TagKey<?> k = TagKey.of(TagKey.Type.of(EmiPort.id("minecraft", parts[0])), EmiPort.id(id.getNamespace(), replacement.substring(1 + parts[0].length())));
 					EmiTags.MODELED_TAGS.put(k, mid);

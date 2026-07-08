@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NetHandlerPlayClient.class)
 public class NetHandlerPlayClientMixin {
 
-    @Inject(at = @At("RETURN"), method = "handleJoinGame")
-    private void onGameJoin(CallbackInfo info) {
-        EmiLog.info("Joining server, EMI waiting for data from server...");
-    }
+	@Inject(at = @At("RETURN"), method = "handleJoinGame")
+	private void onGameJoin(CallbackInfo info) {
+		EmiLog.info("Joining server, EMI waiting for data from server...");
+	}
 }

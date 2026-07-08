@@ -75,7 +75,7 @@ public class EmiStackList {
 			String itemName = "null";
 			try {
 				itemName = item.toString();
-                NonNullList<ItemStack> itemStacks = NonNullList.create();
+				NonNullList<ItemStack> itemStacks = NonNullList.create();
 				item.getSubItems(CreativeTabs.SEARCH, itemStacks);
 				List<EmiStack> stacks = itemStacks.stream().filter(s -> s != null && s.getItem() != null).map(EmiStack::of).collect(Collectors.toList());
 				if (!stacks.isEmpty()) {
@@ -277,7 +277,7 @@ public class EmiStackList {
 		@Override
 		public int hashCode(EmiStack stack) {
 			if (stack != null) {
-                NBTTagCompound changes = stack.getNbt();
+				NBTTagCompound changes = stack.getNbt();
 				int i = 31 + stack.getKey().hashCode();
 				return 31 * i + (changes == null ? 0 : changes.hashCode());
 			}

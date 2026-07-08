@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 
 public class EmiShapelessOreRecipe extends EmiCraftingRecipe {
 
-    public EmiShapelessOreRecipe(ShapelessOreRecipe recipe) {
-        super(recipe.getIngredients().stream().map(EmiShapedOreRecipe::fromOreInput).collect(Collectors.toList()),
-            EmiStack.of(recipe.getRecipeOutput()), EmiPort.getId(recipe));
-        EmiShapedRecipe.setRemainders(input, recipe);
-    }
+	public EmiShapelessOreRecipe(ShapelessOreRecipe recipe) {
+		super(recipe.getIngredients().stream().map(EmiShapedOreRecipe::fromOreInput).collect(Collectors.toList()),
+			EmiStack.of(recipe.getRecipeOutput()), EmiPort.getId(recipe));
+		EmiShapedRecipe.setRemainders(input, recipe);
+	}
 
-    @Override
-    public boolean canFit(int width, int height) {
-        return input.size() <= width * height;
-    }
+	@Override
+	public boolean canFit(int width, int height) {
+		return input.size() <= width * height;
+	}
 }

@@ -107,12 +107,12 @@ public class ButtonWidget extends ClickableWidget {
 		}
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static interface PressAction {
 		public void onPress(ButtonWidget widget);
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static interface NarrationSupplier {
 		public MutableText createNarrationMessage(Supplier<MutableText> textSupplier);
 	}

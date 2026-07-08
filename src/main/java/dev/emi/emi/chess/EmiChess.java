@@ -198,7 +198,7 @@ public class EmiChess {
 		if (type == -1) {
 			if (EmiScreenManager.hasSidebarAvailable(SidebarType.CHESS)) {
 				chess.pending = uuid;
-                client.player.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.invited", player.getName()).asString());
+				client.player.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.invited", player.getName()).asString());
 			} else {
 				sendNetwork(uuid, -4, 0, 0);
 			}

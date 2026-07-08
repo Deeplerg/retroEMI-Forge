@@ -12,10 +12,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiContainer.class)
 public class GuiContainerMixin extends GuiScreen {
-    @Shadow public Container inventorySlots;
+	@Shadow public Container inventorySlots;
 
-    @Inject(method = "initGui", at = @At("TAIL"))
-    private void addEMIWidgets(CallbackInfo ci) {
-        EmiScreenManager.addWidgets(this);
-    }
+	@Inject(method = "initGui", at = @At("TAIL"))
+	private void addEMIWidgets(CallbackInfo ci) {
+		EmiScreenManager.addWidgets(this);
+	}
 }

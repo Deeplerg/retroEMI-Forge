@@ -26,7 +26,7 @@ public class EmiDataLoader<T> extends SinglePreparationResourceReloader<T>
 	private final Consumer<T> apply;
 
 	public EmiDataLoader(ResourceLocation id, String path, Supplier<T> baseSupplier,
-                         DataConsumer<T> prepare, Consumer<T> apply) {
+						 DataConsumer<T> prepare, Consumer<T> apply) {
 		this.id = id;
 		this.path = path;
 		this.baseSupplier = baseSupplier;

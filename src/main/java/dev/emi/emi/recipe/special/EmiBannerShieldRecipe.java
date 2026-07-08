@@ -60,7 +60,7 @@ public class EmiBannerShieldRecipe extends EmiPatternCraftingRecipe {
 			pattern = EmiPort.addRandomBanner(pattern, random);
 		}
 
-        RetroEMI.setBannerPatterns(stack, pattern);
+		RetroEMI.setBannerPatterns(stack, pattern);
 
 		return EmiStack.of(stack);
 	}

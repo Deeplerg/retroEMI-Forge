@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(SlotCrafting.class)
 public interface SlotCraftingAccessor {
-    @Accessor("craftMatrix")
-    InventoryCrafting getCraftMatrix();
+	@Accessor("craftMatrix")
+	InventoryCrafting getCraftMatrix();
 }

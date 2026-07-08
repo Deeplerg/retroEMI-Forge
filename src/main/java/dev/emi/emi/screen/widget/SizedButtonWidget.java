@@ -65,14 +65,14 @@ public class SizedButtonWidget extends ButtonWidget {
 	@Override
 	public void renderWidget(DrawContext raw, int mouseX, int mouseY, float delta) {
 		EmiDrawContext context = EmiDrawContext.wrap(raw);
-        if (!this.isMouseOver(mouseX, mouseY)) {
-            context.resetColor();
-        }
-        context.enableDepthTest();
+		if (!this.isMouseOver(mouseX, mouseY)) {
+			context.resetColor();
+		}
+		context.enableDepthTest();
 		context.drawTexture(texture, this.x, this.y, getU(mouseX, mouseY), getV(mouseX, mouseY), this.width, this.height);
 		if (this.isMouseOver(mouseX, mouseY) && text != null && this.active) {
 			context.push();
-            context.disableDepthTest();
+			context.disableDepthTest();
 			Minecraft client = Minecraft.getMinecraft();
 			EmiRenderHelper.drawTooltip(client.currentScreen, context, text.get().stream().map(EmiPort::ordered).map(TooltipComponent::of).collect(Collectors.toList()), mouseX, mouseY);
 			context.pop();
