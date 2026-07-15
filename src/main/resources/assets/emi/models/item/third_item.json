@@ -7,6 +7,7 @@
       "faces": {
         "south": {
           "texture": "#first",
+          "uv": [0, 0, 6, 16],
           "cullface": "south"
         }
       }
@@ -17,6 +18,7 @@
       "faces": {
         "south": {
           "texture": "#second",
+          "uv": [6, 0, 10, 16],
           "cullface": "south"
         }
       }
@@ -27,6 +29,7 @@
       "faces": {
         "south": {
           "texture": "#third",
+          "uv": [10, 0, 16, 16],
           "cullface": "south"
         }
       }

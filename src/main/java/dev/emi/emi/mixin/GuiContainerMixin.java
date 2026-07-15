@@ -1,5 +1,6 @@
 package dev.emi.emi.mixin;
 
+import com.rewindmc.retroemi.RetroEMI;
 import dev.emi.emi.screen.EmiScreenManager;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -12,10 +13,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiContainer.class)
 public class GuiContainerMixin extends GuiScreen {
-    @Shadow public Container inventorySlots;
+	@Shadow public Container inventorySlots;
 
-    @Inject(method = "initGui", at = @At("TAIL"))
-    private void addEMIWidgets(CallbackInfo ci) {
-        EmiScreenManager.addWidgets(this);
-    }
+	@Inject(method = "initGui", at = @At("TAIL"))
+	private void addEMIWidgets(CallbackInfo ci) {
+		EmiScreenManager.addWidgets(this);
+	}
+
+	@Inject(method = "keyTyped", at = @At("HEAD"), cancellable = true)
+	public void disableHotkeyInEMISearchInput(char c, int k, CallbackInfo ci) {
+		if (RetroEMI.handleKeyboardInput()) {
+			ci.cancel();
+		}
+	}
 }

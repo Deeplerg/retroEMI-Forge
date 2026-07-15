@@ -135,11 +135,11 @@ public class EmiDrawContext {
 	}
 
 	public void drawStack(EmiIngredient stack, int x, int y) {
-		stack.render(raw(), x, y, client.getFrameTimer().getIndex());
+		stack.render(raw(), x, y, client.timer.renderPartialTicks);
 	}
 
 	public void drawStack(EmiIngredient stack, int x, int y, int flags) {
-		drawStack(stack, x, y, client.getFrameTimer().getIndex(), flags);
+		drawStack(stack, x, y, client.timer.renderPartialTicks, flags);
 	}
 
 	public void drawStack(EmiIngredient stack, int x, int y, float delta, int flags) {

@@ -3,9 +3,7 @@ package dev.emi.emi.registry;
 import java.util.List;
 
 import dev.emi.emi.EmiPort;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import dev.emi.emi.api.EmiApi;
@@ -24,49 +22,49 @@ public class EmiCommands extends CommandBase {
 	public static final byte TREE_RESOLUTION = 0x12;
 
 	@Override
-	public String getName() {
+	public String getCommandName() {
 		return "emi";
 	}
 
 	@Override
-	public String getUsage(ICommandSender sender) {
+	public String getCommandUsage(ICommandSender sender) {
 		return "commands.emi.usage";
 	}
 
 	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] userInputStrings) throws WrongUsageException {
-        if (sender instanceof EntityPlayerMP player) {
-            if (userInputStrings.length >= 2) {
-                if (userInputStrings[0].equals("view")) {
-                    if (userInputStrings[1].equals("recipe")) {
-                        if (userInputStrings[2].isEmpty()) {
-                            throw new WrongUsageException("commands.emi.id");
-                        } else {
-                            ResourceLocation id = EmiPort.id(userInputStrings[2]);
-                            send(player, VIEW_RECIPE, id);
-                        }
-                    } else if (userInputStrings[1].equals("tree")) {
-                        send(player, VIEW_TREE, null);
-                    }
-                } else if (userInputStrings[0].equals("tree")) {
-                    if (userInputStrings[1].equals("goal")) {
-                        if (userInputStrings[2].isEmpty()) {
-                            throw new WrongUsageException("commands.emi.id");
-                        } else {
-                            ResourceLocation id = EmiPort.id(userInputStrings[2]);
-                            send(player, TREE_GOAL, id);
-                        }
-                    } else if (userInputStrings[1].equals("resolution")) {
-                        if (userInputStrings[2].isEmpty()) {
-                            throw new WrongUsageException("commands.emi.id");
-                        } else {
-                            ResourceLocation id = EmiPort.id(userInputStrings[2]);
-                            send(player, TREE_RESOLUTION, id);
-                        }
-                    }
-                }
-            }
-        }
+	public void processCommand(ICommandSender sender, String[] userInputStrings) throws WrongUsageException {
+		if (sender instanceof EntityPlayerMP player) {
+			if (userInputStrings.length >= 2) {
+				if (userInputStrings[0].equals("view")) {
+					if (userInputStrings[1].equals("recipe")) {
+						if (userInputStrings[2].isEmpty()) {
+							throw new WrongUsageException("commands.emi.id");
+						} else {
+							ResourceLocation id = EmiPort.id(userInputStrings[2]);
+							send(player, VIEW_RECIPE, id);
+						}
+					} else if (userInputStrings[1].equals("tree")) {
+						send(player, VIEW_TREE, null);
+					}
+				} else if (userInputStrings[0].equals("tree")) {
+					if (userInputStrings[1].equals("goal")) {
+						if (userInputStrings[2].isEmpty()) {
+							throw new WrongUsageException("commands.emi.id");
+						} else {
+							ResourceLocation id = EmiPort.id(userInputStrings[2]);
+							send(player, TREE_GOAL, id);
+						}
+					} else if (userInputStrings[1].equals("resolution")) {
+						if (userInputStrings[2].isEmpty()) {
+							throw new WrongUsageException("commands.emi.id");
+						} else {
+							ResourceLocation id = EmiPort.id(userInputStrings[2]);
+							send(player, TREE_RESOLUTION, id);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -75,7 +73,7 @@ public class EmiCommands extends CommandBase {
 	}
 
 	@Override
-	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] userInputStrings, @Nullable BlockPos targetPos) {
+	public List<String> addTabCompletionOptions(ICommandSender sender, String[] userInputStrings) {
 		if (userInputStrings.length == 1) {
 			return getListOfStringsMatchingLastWord(userInputStrings, "view", "tree");
 		}

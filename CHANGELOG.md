@@ -1,7 +1,8 @@
 * Feature: Support forge 1.12.2
 * Feature: Tags Model has been reimplemented
-* Feature: (FAKE) Batcher Render has been reimplemented
+* Feature: (FAKE) Batcher Render has been reimplemented (1.12.2 Only)
 * Improvement: Favorite and recipe tree button texture improvement
+* Improvement: Recipe Book Action and Use Batched Renderer is disabled in versions that are unusable (1.7.10 Only)
 * Improvement: Optimized code
 * Sync:
   + i18n: Traditional Chinese localization. ([emilyploszaj#1134](https://github.com/emilyploszaj/emi/pull/1161)) -- CrazyO9

@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import shim.com.mojang.blaze3d.systems.RenderSystem;
@@ -27,9 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.fluids.Fluid;
 import shim.net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import shim.net.minecraft.client.gui.tooltip.TextTooltipComponent;
@@ -80,7 +79,7 @@ public class EmiRenderHelper {
 		context.drawTexture(texture, x + coriw, y + corih, cor,        cor,         u + corcen, v + corcen, cor, cor, 256, 256);
 	}
 
-	public static void drawTintedSprite(MatrixStack matrices, TextureAtlasSprite sprite, int color, int x, int y, int xOff, int yOff, int width, int height) {
+	public static void drawTintedSprite(MatrixStack matrices, IIcon sprite, int color, int x, int y, int xOff, int yOff, int width, int height) {
 		if (sprite == null) {
 			return;
 		}
@@ -93,8 +92,10 @@ public class EmiRenderHelper {
 		float g = ((color >> 8) & 255) / 256f;
 		float b = (color & 255) / 256f;
 
-		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		RenderSystem.setShaderColor(r, g, b, 1);
+
+		Tessellator bufferBuilder = Tessellator.instance;
+		bufferBuilder.startDrawingQuads();
 		float xMin = (float) x;
 		float yMin = (float) y;
 		float xMax = xMin + width;
@@ -105,10 +106,10 @@ public class EmiRenderHelper {
 		float vMin = sprite.getMinV() + vSpan / 16 * yOff;
 		float uMax = sprite.getMaxU() - uSpan / 16 * (16 - (width + xOff));
 		float vMax = sprite.getMaxV() - vSpan / 16 * (16 - (height + yOff));
-		bufferBuilder.pos(xMin, yMax, 1).tex(uMin, vMax).endVertex();
-		bufferBuilder.pos(xMax, yMax, 1).tex(uMax, vMax).endVertex();
-		bufferBuilder.pos(xMax, yMin, 1).tex(uMax, vMin).endVertex();
-		bufferBuilder.pos(xMin, yMin, 1).tex(uMin, vMin).endVertex();
+		bufferBuilder.addVertexWithUV(xMin, yMax, 1, uMin, vMax);
+		bufferBuilder.addVertexWithUV(xMax, yMax, 1, uMax, vMax);
+		bufferBuilder.addVertexWithUV(xMax, yMin, 1, uMax, vMin);
+		bufferBuilder.addVertexWithUV(xMin, yMin, 1, uMin, vMin);
 		EmiPort.draw(bufferBuilder);
 	}
 
@@ -181,7 +182,7 @@ public class EmiRenderHelper {
 		for (TooltipComponent comp : components) {
 			if (comp instanceof TextTooltipComponent ottc && ottc.getWidth(CLIENT.fontRenderer) > wrapWidth) {
 				try {
-					for (String line : CLIENT.fontRenderer.listFormattedStringToWidth(ottc.getText(), wrapWidth)) {
+					for (String line : (List<String>) CLIENT.fontRenderer.listFormattedStringToWidth(ottc.getText(), wrapWidth)) {
 						mutable.add(TooltipComponent.of(Text.literal(line)));
 					}
 				} catch (Exception e) {
@@ -339,7 +340,7 @@ public class EmiRenderHelper {
 			context.matrices().translate(x + 4, y + 4, 0);
 
 			recipe.addWidgets(holder);
-			float delta = CLIENT.getFrameTimer().getIndex();
+			float delta = CLIENT.timer.renderPartialTicks;
 			for (Widget widget : widgets) {
 				widget.render(context.raw(), -1000, -1000, delta);
 			}

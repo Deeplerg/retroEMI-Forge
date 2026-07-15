@@ -20,7 +20,7 @@ import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.serializer.EmiIngredientSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class RecipeDefaults {
 	public final List<ResourceLocation> added = Lists.newArrayList();
@@ -55,7 +55,7 @@ public class RecipeDefaults {
 		Map<EmiIngredient, EmiRecipe> map = Maps.newHashMap();
 		if (!FMLCommonHandler.instance().getSide().isServer()) {
 			Minecraft client = Minecraft.getMinecraft();
-			if (client.world == null) {
+			if (client.theWorld == null) {
 				return map;
 			}
 		}

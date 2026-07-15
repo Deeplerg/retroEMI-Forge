@@ -14,11 +14,11 @@ import dev.emi.emi.runtime.EmiLog;
 import dev.emi.emi.mixin.accessor.InventoryCraftingAccessor;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.common.crafting.IShapedRecipe;
+import net.minecraft.item.crafting.ShapedRecipes;
 
 public class EmiShapedRecipe extends EmiCraftingRecipe {
 
-	public EmiShapedRecipe(IShapedRecipe recipe) {
+	public EmiShapedRecipe(ShapedRecipes recipe) {
 		super(padIngredients(recipe), EmiStack.of(EmiPort.getOutput(recipe)), EmiPort.getId(recipe), false);
 		setRemainders(input, recipe);
 	}
@@ -45,22 +45,22 @@ public class EmiShapedRecipe extends EmiCraftingRecipe {
 						stack.setRemainder(EmiStack.of(stack.getItemStack().getItem().getContainerItem()));
 					}
 				}
-				Arrays.fill(((InventoryCraftingAccessor) inv).getStackList().toArray(), null);
+				Arrays.fill(((InventoryCraftingAccessor) inv).getStackList(), null);
 			}
 		} catch (Exception e) {
 			EmiLog.error("Exception thrown setting remainders for " + EmiPort.getId(recipe), e);
 		}
 	}
 
-	private static List<EmiIngredient> padIngredients(IShapedRecipe recipe) {
+	private static List<EmiIngredient> padIngredients(ShapedRecipes recipe) {
 		List<EmiIngredient> list = Lists.newArrayList();
 		int i = 0;
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 3; x++) {
-				if (x >= recipe.getRecipeWidth() || y >= recipe.getRecipeHeight() || i >= recipe.getIngredients().size()) {
+				if (x >= recipe.recipeWidth || y >= recipe.recipeHeight || i >= recipe.recipeItems.length) {
 					list.add(EmiStack.EMPTY);
 				} else {
-					list.add(EmiIngredient.of(recipe.getIngredients().get(i++)));
+					list.add(EmiStack.of(recipe.recipeItems[i++]));
 				}
 			}
 		}

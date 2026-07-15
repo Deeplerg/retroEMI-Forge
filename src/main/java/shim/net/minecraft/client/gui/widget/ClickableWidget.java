@@ -8,10 +8,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import shim.com.mojang.blaze3d.systems.RenderSystem;
 import shim.net.minecraft.client.gui.DrawContext;
 import shim.net.minecraft.client.gui.Drawable;
@@ -35,8 +34,8 @@ import java.util.function.Consumer;
 public abstract class ClickableWidget extends Gui implements Drawable, Element {
 	public enum SelectionType {
 		NONE,
-        HOVERED,
-        FOCUSED
+		HOVERED,
+		FOCUSED
 	}
 
 	public static final ResourceLocation WIDGETS_TEXTURE = EmiPort.id("textures/gui/widgets.png");
@@ -123,7 +122,7 @@ public abstract class ClickableWidget extends Gui implements Drawable, Element {
 		} else if (this.isSelected()) {
 			i += hoveredVOffset;
 		}
-        RenderSystem.enableDepthTest();
+		RenderSystem.enableDepthTest();
 		EmiDrawContext.instance().drawTexture(texture, x, y, 0, u, i, width, height, textureWidth, textureHeight);
 	}
 
@@ -182,7 +181,7 @@ public abstract class ClickableWidget extends Gui implements Drawable, Element {
 	}
 
 	public void playDownSound() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(EmiPort.id("gui.button.press"), 1.0f));
 	}
 
 	public int getWidth() {

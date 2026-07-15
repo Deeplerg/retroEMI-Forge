@@ -12,6 +12,7 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.runtime.EmiDrawContext;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
+import shim.net.minecraft.item.ItemStacks;
 import shim.net.minecraft.text.Text;
 import shim.net.minecraft.util.Formatting;
 
@@ -92,7 +93,10 @@ public class RemainderTooltipComponent implements EmiTooltipComponent {
 
 	private int getDamageDelta(EmiStack stack, EmiStack remainder) {
 //		if (remainder.isEqual(stack)) {
-			return stack.getItemStack().getItemDamage() - remainder.getItemStack().getItemDamage();
+		if (ItemStacks.isEmpty(stack.getItemStack()) || ItemStacks.isEmpty(remainder.getItemStack())) {
+			return 0;
+		}
+		return stack.getItemStack().getItemDamage() - remainder.getItemStack().getItemDamage();
 //		}
 //		return 0;
 	}

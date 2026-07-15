@@ -1,6 +1,7 @@
 package dev.emi.emi.data;
 
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -29,11 +30,11 @@ public class RecipeDefaultLoader extends SinglePreparationResourceReloader<Recip
 	protected RecipeDefaults prepare(IResourceManager manager, Profiler profiler) {
 		RecipeDefaults defaults = new RecipeDefaults();
 		for (ResourceLocation id : EmiPort.findResources(manager, "recipe/defaults", i -> i.endsWith(".json"))) {
-			if (!id.getNamespace().equals("emi")) {
+			if (!id.getResourceDomain().equals("emi")) {
 				continue;
 			}
 			try {
-				for (IResource resource : manager.getAllResources(id)) {
+				for (IResource resource : (List<IResource>) manager.getAllResources(id)) {
 					InputStreamReader reader = new InputStreamReader(EmiPort.getInputStream(resource));
 					JsonObject json = JsonHelper.deserialize(GSON, reader, JsonObject.class);
 					loadDefaults(defaults, json);

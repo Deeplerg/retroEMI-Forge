@@ -98,7 +98,7 @@ public class FluidEmiStack extends EmiStack {
 		if (amount > 1) {
 			list.add(EmiTooltipComponents.getAmount(this));
 		}
-		String namespace = this.getId().getNamespace();
+		String namespace = this.getId().getResourceDomain();
 		EmiTooltipComponents.appendModName(list, namespace);
 		list.addAll(super.getTooltip());
 		return list;
@@ -109,11 +109,11 @@ public class FluidEmiStack extends EmiStack {
 		return EmiAgnos.getFluidName(fluid, componentChanges);
 	}
 
-    @Override
-    public int getSubtype() {
-        return 0;
-    }
+	@Override
+	public int getSubtype() {
+		return 0;
+	}
 
-    static class FluidEntry {
+	static class FluidEntry {
 	}
 }

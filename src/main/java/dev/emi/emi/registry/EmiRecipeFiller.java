@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import net.minecraft.inventory.ClickType;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
@@ -37,6 +36,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import com.rewindmc.retroemi.RetroEMI;
+import shim.net.minecraft.inventory.ClickType;
+import shim.net.minecraft.item.ItemStacks;
 
 public class EmiRecipeFiller {
 	public static Map<Class<? extends Container>, List<EmiRecipeHandler<?>>> handlers = Maps.newHashMap();
@@ -156,11 +157,11 @@ public class EmiRecipeFiller {
 							if (EmiStack.of(s.getStack()).isEqual(stack)) {
 								for (DiscoveredItem di : d) {
 									if (RetroEMI.canCombine(ss, di.stack)) {
-										di.amount += ss.getCount();
+										di.amount += ss.stackSize;
 										continue slotLoop;
 									}
 								}
-								d.add(new DiscoveredItem(stack, ss, ss.getCount(), (int) ingredient.getAmount(), ss.getMaxStackSize()));
+								d.add(new DiscoveredItem(stack, ss, ss.stackSize, (int) ingredient.getAmount(), ss.getMaxStackSize()));
 							}
 						}
 					}
@@ -227,10 +228,10 @@ public class EmiRecipeFiller {
 					if (di != null) {
 						ItemStack is = di.stack.copy();
 						int a = di.catalyst() ? di.consumed : di.consumed * maxAmount;
-						is.setCount(a);
+						is.stackSize = a;
 						desired.add(is);
 					} else {
-						desired.add(ItemStack.EMPTY);
+						desired.add(ItemStacks.EMPTY);
 					}
 				}
 				return desired;
@@ -245,7 +246,7 @@ public class EmiRecipeFiller {
 		List<EmiIngredient> inputs = recipe.getInputs();
 		List<ItemStack> stacks = Lists.newArrayList();
 		Slot output = handler.getOutputSlot((T)screen.inventorySlots);
-		if (output != null && !output.getStack().isEmpty() && recipe.getOutputs().size() > 0
+		if (output != null && !ItemStacks.isEmpty(output.getStack()) && recipe.getOutputs().size() > 0
 				&& !RetroEMI.canCombine(output.getStack(), recipe.getOutputs().get(0).getItemStack())) {
 			return 0;
 		}
@@ -253,7 +254,7 @@ public class EmiRecipeFiller {
 			if (slot != null) {
 				stacks.add(slot.getStack());
 			} else {
-				stacks.add(ItemStack.EMPTY);
+				stacks.add(ItemStacks.EMPTY);
 			}
 		}
 		long amount = Long.MAX_VALUE;
@@ -261,7 +262,7 @@ public class EmiRecipeFiller {
 		for (int i = 0; i < inputs.size(); i++) {
 			EmiIngredient input = inputs.get(i);
 			if (input.isEmpty()) {
-				if (stacks.get(i).isEmpty()) {
+				if (ItemStacks.isEmpty(stacks.get(i))) {
 					continue;
 				}
 				return 0;
@@ -291,13 +292,13 @@ public class EmiRecipeFiller {
 		GuiContainer screen, List<ItemStack> stacks, EmiCraftContext.Destination destination) {
 		Minecraft client = Minecraft.getMinecraft();
 		T screenHandler = (T) screen.inventorySlots;
-		if (handler != null && client.player.inventory.getItemStack().isEmpty()) {
+		if (handler != null && ItemStacks.isEmpty(client.thePlayer.inventory.getItemStack())) {
 			PlayerControllerMP manager = client.playerController;
-			EntityPlayer player = client.player;
+			EntityPlayer player = client.thePlayer;
 			List<Slot> clear = handler.getCraftingSlots(screenHandler);
 			for (Slot slot : clear) {
 				if (slot != null) {
-					manager.windowClick(screenHandler.windowId, slot.slotNumber, 0, ClickType.QUICK_MOVE, player);
+					manager.windowClick(screenHandler.windowId, slot.slotNumber, 0, ClickType.QUICK_MOVE.ordinal(), player);
 				}
 			}
 			List<Slot> inputs = handler.getInputSources(screenHandler);
@@ -305,7 +306,7 @@ public class EmiRecipeFiller {
 			outer:
 			for (int i = 0; i < stacks.size(); i++) {
 				ItemStack stack = stacks.get(i);
-				if (stack.isEmpty()) {
+				if (ItemStacks.isEmpty(stack)) {
 					continue;
 				}
 				if (i >= slots.size()) {
@@ -318,23 +319,23 @@ public class EmiRecipeFiller {
 				if (crafting == null) {
 					return false;
 				}
-				int needed = stack.getCount();
+				int needed = stack.stackSize;
 				for (Slot input : inputs) {
 					if (slots.contains(input) || input.getStack() == null) {
 						continue;
 					}
 					ItemStack is = input.getStack().copy();
 					if (RetroEMI.canCombine(is, stack)) {
-						manager.windowClick(screenHandler.windowId, input.slotNumber, 0, ClickType.PICKUP, player);
-						if (is.getCount() <= needed) {
-							needed -= is.getCount();
-							manager.windowClick(screenHandler.windowId, crafting.slotNumber, 0, ClickType.PICKUP, player);
+						manager.windowClick(screenHandler.windowId, input.slotNumber, 0, ClickType.PICKUP.ordinal(), player);
+						if (is.stackSize <= needed) {
+							needed -= is.stackSize;
+							manager.windowClick(screenHandler.windowId, crafting.slotNumber, 0, ClickType.PICKUP.ordinal(), player);
 						} else {
 							while (needed > 0) {
-								manager.windowClick(screenHandler.windowId, crafting.slotNumber, 1, ClickType.PICKUP, player);
+								manager.windowClick(screenHandler.windowId, crafting.slotNumber, 1, ClickType.PICKUP.ordinal(), player);
 								needed--;
 							}
-							manager.windowClick(screenHandler.windowId, input.slotNumber, 0, ClickType.PICKUP, player);
+							manager.windowClick(screenHandler.windowId, input.slotNumber, 0, ClickType.PICKUP.ordinal(), player);
 						}
 					}
 					if (needed == 0) {
@@ -346,9 +347,9 @@ public class EmiRecipeFiller {
 			Slot slot = handler.getOutputSlot(screenHandler);
 			if (slot != null) {
 				if (destination == EmiCraftContext.Destination.CURSOR) {
-					manager.windowClick(screenHandler.windowId, slot.slotNumber, 0, ClickType.PICKUP, player);
+					manager.windowClick(screenHandler.windowId, slot.slotNumber, 0, ClickType.PICKUP.ordinal(), player);
 				} else if (destination == EmiCraftContext.Destination.INVENTORY) {
-					manager.windowClick(screenHandler.windowId, slot.slotNumber, 0, ClickType.QUICK_MOVE, player);
+					manager.windowClick(screenHandler.windowId, slot.slotNumber, 0, ClickType.QUICK_MOVE.ordinal(), player);
 				}
 			}
 			return true;

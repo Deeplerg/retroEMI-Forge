@@ -16,9 +16,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class EmiRepairItemRecipe extends EmiPatternCraftingRecipe {
-    public static final List<Item> TOOLS =  RetroEMI.getAllItems().stream()
-            .filter(item -> item != null && item.isRepairable()).collect(Collectors.toList());
-    private final Item tool;
+	public static final List<Item> TOOLS =  RetroEMI.getAllItems().stream()
+			.filter(item -> item != null && item.isRepairable()).collect(Collectors.toList());
+	private final Item tool;
 
 	public EmiRepairItemRecipe(Item tool, ResourceLocation id) {
 		super(shim.java.List.of(

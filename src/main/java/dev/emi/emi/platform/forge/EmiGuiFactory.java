@@ -1,6 +1,6 @@
 package dev.emi.emi.platform.forge;
 
-import net.minecraftforge.fml.client.IModGuiFactory;
+import cpw.mods.fml.client.IModGuiFactory;
 import dev.emi.emi.screen.ConfigScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -13,17 +13,17 @@ public class EmiGuiFactory implements IModGuiFactory {
 	}
 
 	@Override
-	public boolean hasConfigGui() {
-		return true;
-	}
-
-	@Override
-	public GuiScreen createConfigGui(GuiScreen screen) {
-		return new ConfigScreen(screen);
+	public Class<? extends GuiScreen> mainConfigGuiClass() {
+		return ConfigScreen.class;
 	}
 
 	@Override
 	public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
 		return shim.java.Set.of();
+	}
+
+	@Override
+	public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
+	   return null;
 	}
 }

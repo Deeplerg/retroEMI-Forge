@@ -9,8 +9,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.rewindmc.retroemi.RetroEMI;
-import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Iterables;
@@ -18,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.rewindmc.retroemi.RetroEMI;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.EmiUtil;
 import dev.emi.emi.api.recipe.EmiRecipe;
@@ -39,11 +38,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraft.util.ResourceLocation;
 
 public class EmiRecipes {
 	public static volatile Worker activeWorker = null;
@@ -70,16 +67,16 @@ public class EmiRecipes {
 		byWorkstation.clear();
 		decorators.clear();
 		manager = Manager.EMPTY;
-		Minecraft client = Minecraft.getMinecraft();
-		if (client.world != null) {
-            IForgeRegistry<IRecipe> manager = ForgeRegistries.RECIPES;
-			recipeIds = new Reference2ObjectOpenHashMap<>();
-			if (manager != null) {
-				for (IRecipe entry : manager.getValuesCollection()) {
-					recipeIds.put(entry, entry.getRegistryName());
-				}
-			}
-		}
+//		Minecraft client = Minecraft.getMinecraft();
+//		if (client.theWorld != null) {
+//			CraftingManager manager = CraftingManager.getInstance();
+//			recipeIds = new Reference2ObjectOpenHashMap<>();
+//			if (manager != null) {
+//				for (IRecipe entry : (List<IRecipe>) manager.getRecipeList()) {
+//					recipeIds.put(entry, SyntheticIdentifier.generateId(entry));
+//				}
+//			}
+//		}
 	}
 
 	public static void bake() {
@@ -158,7 +155,7 @@ public class EmiRecipes {
 			this.recipes = Lists.newArrayList(recipes);
 
 			Object2IntMap<ResourceLocation> duplicateIds = new Object2IntOpenHashMap<>();
-			Set<ResourceLocation> incorrectIds = new ObjectArraySet<>();
+//			Set<ResourceLocation> incorrectIds = new ObjectArraySet<>();
 			for (EmiRecipe recipe : recipes) {
 				ResourceLocation id = recipe.getId();
 				EmiRecipeCategory category = recipe.getCategory();
@@ -176,15 +173,15 @@ public class EmiRecipes {
 				}
 				byCategory.computeIfAbsent(category, a -> Lists.newArrayList()).add(recipe);
 				if (id != null) {
-					if (byId.containsKey(id) && !id.getNamespace().equals("shaped_ore") && !id.getNamespace().equals("shapeless_ore")) {
+					if (byId.containsKey(id) && !id.getResourceDomain().equals("shaped_ore") && !id.getResourceDomain().equals("shapeless_ore")) {
 						duplicateIds.put(id, duplicateIds.getOrDefault(id, 1) + 1);
 					} else {
 						byId.put(id, recipe);
 					}
 
-					if (EmiConfig.devMode && !id.getPath().startsWith("/") && !recipeIds.containsValue(id)) {
-						incorrectIds.add(id);
-					}
+//					if (EmiConfig.devMode && !id.getResourceDomain().startsWith("/") && !recipeIds.containsValue(id)) {
+//						incorrectIds.add(id);
+//					}
 				}
 			}
 
@@ -192,9 +189,9 @@ public class EmiRecipes {
 				for (ResourceLocation id : duplicateIds.keySet()) {
 					EmiReloadLog.warn(duplicateIds.getInt(id) + " recipes loaded with the same id: " + id);
 				}
-				for (ResourceLocation id : incorrectIds) {
-					EmiReloadLog.warn("Recipe " + id + " not present in recipe manager. Consider prefixing its path with '/' if it is synthetic.");
-				}
+//				for (ResourceLocation id : incorrectIds) {
+//					EmiReloadLog.warn("Recipe " + id + " not present in recipe manager. Consider prefixing its path with '/' if it is synthetic.");
+//				}
 			}
 
 			Map<EmiStack, Set<EmiRecipe>> byInput = new Object2ObjectOpenCustomHashMap<>(new EmiStackList.ComparisonHashStrategy());
@@ -258,7 +255,7 @@ public class EmiRecipes {
 
 			if (EmiConfig.devMode) {
 				EmiDev.duplicateRecipeIds = duplicateIds.keySet();
-				EmiDev.incorrectRecipeIds = incorrectIds;
+//				EmiDev.incorrectRecipeIds = incorrectIds;
 			}
 		}
 

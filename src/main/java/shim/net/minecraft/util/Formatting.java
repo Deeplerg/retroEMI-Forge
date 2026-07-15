@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.EnumChatFormatting;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,11 +109,11 @@ public enum Formatting {
 		return name == null ? null : BY_NAME.get(sanitize(name));
 	}
 
-	public static Formatting wrap(TextFormatting raw) {
+	public static Formatting wrap(EnumChatFormatting raw) {
 		return Formatting.valueOf(raw.name());
 	}
 
-	public TextFormatting raw() {
-		return TextFormatting.valueOf(this.name);
+	public EnumChatFormatting raw() {
+		return EnumChatFormatting.valueOf(this.name);
 	}
 }

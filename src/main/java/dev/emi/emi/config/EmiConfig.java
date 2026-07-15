@@ -78,6 +78,7 @@ public class EmiConfig {
 	// UI
 	@Comment("Which action should be performed when clicking the recipe book.")
 	@ConfigValue("ui.recipe-book-action")
+	@ConfigDisabled
 	public static RecipeBookAction recipeBookAction = RecipeBookAction.TOGGLE_CRAFTABLES;
 
 	@Comment("Where to display status effects in the inventory.")
@@ -109,6 +110,7 @@ public class EmiConfig {
 	@Comment("Whether to use the batched render system. Batching is faster, but may have incompatibilities"
 		+ " with shaders or other mods.")
 	@ConfigValue("ui.use-batched-renderer")
+	@ConfigDisabled
 	public static boolean useBatchedRenderer = false;// The Batched Renderer renders so badly that it defaults to false
 
 	@Comment("Whether to have the search bar in the center of the screen, instead of to the side.")
@@ -210,7 +212,7 @@ public class EmiConfig {
 	public static IntGroup leftSidebarSize = new IntGroup(
 		"emi.sidebar.size.",
 		shim.java.List.of("columns", "rows"),
-        shim.java.List.of(12, 100)
+		shim.java.List.of(12, 100)
 	);
 
 	@Comment("How much space to maintain between the left sidebar and obstructions, in pixels")
@@ -251,7 +253,7 @@ public class EmiConfig {
 	public static IntGroup rightSidebarSize = new IntGroup(
 		"emi.sidebar.size.",
 		shim.java.List.of("columns", "rows"),
-        shim.java.List.of(12, 100)
+		shim.java.List.of(12, 100)
 	);
 
 	@Comment("How much space to maintain between the right sidebar and obstructions, in pixels")
@@ -289,7 +291,7 @@ public class EmiConfig {
 	public static IntGroup topSidebarSize = new IntGroup(
 		"emi.sidebar.size.",
 		shim.java.List.of("columns", "rows"),
-        shim.java.List.of(9, 9)
+		shim.java.List.of(9, 9)
 	);
 
 	@Comment("How much space to maintain between the top sidebar and obstructions, in pixels")
@@ -327,7 +329,7 @@ public class EmiConfig {
 	public static IntGroup bottomSidebarSize = new IntGroup(
 		"emi.sidebar.size.",
 		shim.java.List.of("columns", "rows"),
-        shim.java.List.of(9, 9)
+		shim.java.List.of(9, 9)
 	);
 
 	@Comment("How much space to maintain between the bottom sidebar and obstructions, in pixels")
@@ -844,6 +846,11 @@ public class EmiConfig {
 	@Target(ElementType.FIELD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public static @interface ConfigGroupEnd {
+	}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface ConfigDisabled {
 	}
 
 	private static interface Setter {

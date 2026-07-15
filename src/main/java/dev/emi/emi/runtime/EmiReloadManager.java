@@ -12,6 +12,7 @@ import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.bom.BoM;
 import dev.emi.emi.mixinsupport.EmiMixinTransformation;
+import dev.emi.emi.nemi.NemiPlugin;
 import dev.emi.emi.platform.EmiAgnos;
 import dev.emi.emi.registry.EmiComparisonDefaults;
 import dev.emi.emi.registry.EmiDragDropHandlers;
@@ -29,7 +30,7 @@ import dev.emi.emi.screen.EmiScreenBase;
 import dev.emi.emi.screen.EmiScreenManager;
 import dev.emi.emi.search.EmiSearch;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraft.item.crafting.CraftingManager;
 import shim.net.minecraft.text.Text;
 
 public class EmiReloadManager {
@@ -146,18 +147,24 @@ public class EmiReloadManager {
 						continue;
 					}
 					Minecraft client = Minecraft.getMinecraft();
-					if (client.world == null) {
+					if (client.theWorld == null) {
 						EmiReloadLog.warn("World is null");
 						break;
-					} else if (ForgeRegistries.RECIPES == null) {
+					} else if (CraftingManager.getInstance() == null) {
 						EmiReloadLog.warn("Recipe Manager is null");
 						break;
 					}
 					// No entrypoint, this step takes a long time
 					step(EmiPort.literal("Finding plugins"));
+					long t = System.currentTimeMillis();
 					List<EmiPluginContainer> plugins = Lists.newArrayList();
 					plugins.addAll(EmiAgnos.getPlugins().stream()
 						.sorted((a, b) -> Integer.compare(entrypointPriority(a), entrypointPriority(b))).collect(java.util.stream.Collectors.toList()));
+
+					if (NemiPlugin.isNEILoaded) {
+						plugins.add(new EmiPluginContainer(new NemiPlugin(), "nemi"));
+					}
+					EmiLog.info("Found plugins in " + (System.currentTimeMillis() - t) + "ms");
 					EmiInitRegistry initRegistry = new EmiInitRegistryImpl();
 					for (EmiPluginContainer container : plugins) {
 						step(EmiPort.literal("Initializing plugin from " + container.id()), 5_000);

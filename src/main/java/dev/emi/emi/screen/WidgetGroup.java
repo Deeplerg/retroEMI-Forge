@@ -63,15 +63,15 @@ public class WidgetGroup implements WidgetHolder {
 			errors.add(new RecipeError(RecipeError.Severity.WARNING, EmiTooltip.splitTranslate("emi.dev.null_recipe_id")));
 		} else if (EmiDev.duplicateRecipeIds.contains(id)) {
 			List<TooltipComponent> tooltip = Lists.newArrayList();
-			if (Objects.equals(id.getNamespace(), "minecraft") || Objects.equals(id.getNamespace(), "emi")) {
+			if (Objects.equals(id.getResourceDomain(), "minecraft") || Objects.equals(id.getResourceDomain(), "emi")) {
 				tooltip.addAll(EmiTooltip.splitTranslate("emi.dev.duplicate_vanilla_recipe_id", id));
 			} else {
 				tooltip.addAll(EmiTooltip.splitTranslate("emi.dev.duplicate_recipe_id", id));
 			}
 			if (cid != null) {
-				String suggestedPath = cid.getPath() + "/" + id.getNamespace() + "/" + id.getPath();
-				if (EmiApi.getRecipeManager().getRecipe(EmiPort.id(cid.getNamespace(), suggestedPath)) == null) {
-					tooltip.addAll(EmiTooltip.splitTranslate("emi.dev.suggest_id", cid.getNamespace(), suggestedPath));
+				String suggestedPath = cid.getResourcePath() + "/" + id.getResourceDomain() + "/" + id.getResourcePath();
+				if (EmiApi.getRecipeManager().getRecipe(EmiPort.id(cid.getResourceDomain(), suggestedPath)) == null) {
+					tooltip.addAll(EmiTooltip.splitTranslate("emi.dev.suggest_id", cid.getResourceDomain(), suggestedPath));
 				} else {
 					tooltip.addAll(EmiTooltip.splitTranslate("emi.dev.synthetic_id"));
 				}

@@ -3,14 +3,16 @@ package dev.emi.emi.mixin;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.EmiApi;
 import dev.emi.emi.api.recipe.EmiRecipe;
+import dev.emi.emi.mixin.accessor.CraftingManagerAccessor;
 import dev.emi.emi.runtime.EmiSidebars;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,16 +23,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SlotCrafting.class)
 public class SlotCraftingMixin {
 	@Shadow @Final
-	private InventoryCrafting craftMatrix;
+	private IInventory craftMatrix;
 	@Shadow @Final
-	private EntityPlayer player;
+	private EntityPlayer thePlayer;
 
 	@Inject(at = @At("HEAD"), method = "onCrafting(Lnet/minecraft/item/ItemStack;)V")
 	private void onCrafted(ItemStack stack, CallbackInfo info) {
-		World world = player.getEntityWorld();
+		World world = thePlayer.getEntityWorld();
 		if (world.isRemote) {
-			for (IRecipe r : ForgeRegistries.RECIPES.getValuesCollection()) {
-				if (r.matches(craftMatrix, world)) {
+			InventoryCrafting inv = (InventoryCrafting) craftMatrix;
+			for (IRecipe r : ((CraftingManagerAccessor) CraftingManager.getInstance()).getRecipes()) {
+				if (r.matches(inv, world)) {
 					EmiRecipe recipe = EmiApi.getRecipeManager().getRecipe(EmiPort.getId(r));
 					if (recipe != null) {
 						EmiSidebars.craft(recipe);

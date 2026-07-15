@@ -245,7 +245,7 @@ public class EmiSearchWidget extends TextFieldWidget {
 		view.pushMatrix();
 		if (deg != 0) {
 			view.translate(this.x + (double) this.width / 2, this.y + (double) this.height / 2, 0);
-            view.multiply(RotationAxis.NEGATIVE_Z.rotationDegrees(deg));
+			view.multiply(RotationAxis.NEGATIVE_Z.rotationDegrees(deg));
 			view.translate(-(this.x + (double) this.width / 2), -(this.y + (double) this.height / 2), 0);
 			EmiPort.applyModelViewMatrix();
 		}
@@ -255,13 +255,13 @@ public class EmiSearchWidget extends TextFieldWidget {
 			float h = ((lastRender & amount) % (float) amount) / (float) amount;
 			int rgb = Color.HSBtoRGB(h, 1, 1);
 			context.setColor(((rgb >> 16) & 0xFF) / 255f, ((rgb >> 8) & 0xFF) / 255f, ((rgb >> 0) & 0xFF) / 255f);
-            this.setEditableColor(rgb);
-            this.setUneditableColor(rgb);
-            this.setFrameColor(rgb);
+			this.setEditableColor(rgb);
+			this.setUneditableColor(rgb);
+			this.setFrameColor(rgb);
 		} else {
-            this.setEditableColor(0xE0E0E0);
-            this.setUneditableColor(0x707070);
-            this.setFrameColor(0);
+			this.setEditableColor(0xE0E0E0);
+			this.setUneditableColor(0x707070);
+			this.setFrameColor(0);
 		}
 
 		if (EmiConfig.enabled) {

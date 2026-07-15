@@ -1,19 +1,27 @@
 package com.rewindmc.retroemi;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gtnewhorizon.gtnhlib.client.model.loading.ModelDeserializer;
+import com.gtnewhorizon.gtnhlib.client.model.unbaked.JSONModel;
+import cpw.mods.fml.common.FMLCommonHandler;
 import dev.emi.emi.mixin.accessor.GuiTextFieldAccessor;
+import dev.emi.emi.platform.EmiAgnos;
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.PotionUtils;
+import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
 import shim.com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -41,16 +49,35 @@ import shim.net.minecraft.client.gui.ParentElement;
 import shim.net.minecraft.client.gui.tooltip.TooltipBackgroundRenderer;
 import shim.net.minecraft.client.gui.tooltip.TooltipComponent;
 import shim.net.minecraft.client.gui.tooltip.TooltipPositioner;
+import shim.net.minecraft.client.util.ITooltipFlag;
 import shim.net.minecraft.client.util.math.MatrixStack;
 import shim.net.minecraft.client.util.math.Vec2i;
+import shim.net.minecraft.item.ItemStacks;
 import shim.net.minecraft.text.MutableText;
 import shim.net.minecraft.text.Text;
 import shim.net.minecraft.util.Formatting;
 
 public class RetroEMI {
 	public static final RetroEMI instance = new RetroEMI();
+	public final RenderItem itemRenderer;
 
 	private static final List<Runnable> tickQueue = new ArrayList<>();
+
+	private RetroEMI() {
+		if (!FMLCommonHandler.instance().getSide().isServer()) {
+			itemRenderer = RenderItem.getInstance();
+		} else {
+			itemRenderer = null;
+		}
+	}
+
+	public static boolean isSideLit(ItemStack item) {
+		if (item.getItem() instanceof ItemBlock) {
+			Block b = ((ItemBlock) item.getItem()).field_150939_a;
+			return RenderBlocks.renderItemIn3d(b.getRenderType());
+		}
+		return false;
+	}
 
 	public static void executeOnMainThread(Runnable r) {
 		synchronized (tickQueue) {
@@ -70,8 +97,8 @@ public class RetroEMI {
 	}
 
 	public static Collection<PotionEffect> getEffects(EmiStack stack) {
-		if (stack.getItemStack().getItem() instanceof ItemPotion) {
-			return PotionUtils.getEffectsFromStack(stack.getItemStack());
+		if (stack.getItemStack().getItem() instanceof ItemPotion p) {
+			return p.getEffects(stack.getItemStack());
 		}
 		return Collections.emptyList();
 	}
@@ -121,7 +148,7 @@ public class RetroEMI {
 
 	public static void offerOrDrop(EntityPlayer player, ItemStack stack) {
 		if (!player.inventory.addItemStackToInventory(stack)) {
-			player.dropItem(stack, false);
+			player.dropPlayerItemWithRandomChoice(stack, false);
 		}
 	}
 
@@ -153,8 +180,8 @@ public class RetroEMI {
 		int o = vector2ic.y();
 		matrix.push();
 		int p = 400;
-		Tessellator tess = Tessellator.getInstance();
-		GlStateManager.disableTexture2D();
+		Tessellator tess = Tessellator.instance;
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		RenderSystem.enableDepthTest();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
@@ -184,7 +211,7 @@ public class RetroEMI {
 			Minecraft client = Minecraft.getMinecraft();
 			GuiScreen screen = client.currentScreen;
 			if (screen instanceof GuiContainer) {
-				ScaledResolution sr = new ScaledResolution(client);
+				ScaledResolution sr = new ScaledResolution(client, client.displayWidth, client.displayHeight);
 				double xScale = (sr.getScaledWidth_double() / client.displayWidth);
 				double yScale = (sr.getScaledHeight_double() / client.displayHeight);
 				double mx = Mouse.getEventX() * xScale;
@@ -211,8 +238,9 @@ public class RetroEMI {
 				}
 				int dwheel = Mouse.getEventDWheel();
 				if (dwheel != 0) {
-					// If it is lwjgl3, dividing by 120D is not necessary
-					if (EmiScreenManager.mouseScrolled(mx, my, dwheel / 120D)) {
+					double factor = 1D;
+					if (!EmiAgnos.isModLoaded("lwjgl3ify")) factor = 120D;
+					if (EmiScreenManager.mouseScrolled(mx, my, dwheel / factor)) {
 						return true;
 					}
 				}
@@ -259,7 +287,7 @@ public class RetroEMI {
 	}
 
 	public static boolean hasTranslation(String s) {
-		return I18n.hasKey(s);
+		return !I18n.format(s).equals(s);
 	}
 
 	public static String replaceCharAt(String s, int index, char c) {
@@ -268,7 +296,7 @@ public class RetroEMI {
 
 	public static List<Item> getAllItems() {
 		List<Item> items = new ArrayList<>();
-		EmiPort.getItemRegistry().forEach(items::add);
+		((Iterable<Item>) EmiPort.getItemRegistry()).forEach(items::add);
 		return items;
 	}
 
@@ -280,29 +308,50 @@ public class RetroEMI {
 		return client.displayWidth / EmiPort.getGuiScale(client);
 	}
 
-	public static void setBannerPatterns(ItemStack stack, NBTTagList patterns) {
-		NBTTagCompound tag = stack.getSubCompound("BlockEntityTag");
-		if (tag == null) {
-			tag = new NBTTagCompound();
-			stack.setTagInfo("BlockEntityTag", tag);
+	private static @Nullable String getIdInner(ItemStack stack) {
+		if (ItemStacks.isEmpty(stack)) {
+			return null;
 		}
-		tag.setTag("Patterns", patterns);
+		Item item = stack.getItem();
+		if (item instanceof ItemBlock ib) {
+			return EmiPort.getBlockRegistry().getNameForObject(ib.field_150939_a);
+		} else {
+			return EmiPort.getItemRegistry().getNameForObject(item);
+		}
 	}
 
+	public static @Nullable String getId(ItemStack stack) {
+		String s = getIdInner(stack);
+		if (s != null && s.contains(":")) {
+			String[] parts = s.split(":");
+			return parts[1];
+		}
+		return null;
+	}
+
+//	public static void setBannerPatterns(ItemStack stack, NBTTagList patterns) {
+//		NBTTagCompound tag = stack.getSubCompound("BlockEntityTag");
+//		if (tag == null) {
+//			tag = new NBTTagCompound();
+//			stack.setTagInfo("BlockEntityTag", tag);
+//		}
+//		tag.setTag("Patterns", patterns);
+//	}
+
 	public static List<Text> getItemToolTip(ItemStack stack, ITooltipFlag.TooltipFlags type) {
-		List<String> rawTip = stack.getTooltip(Minecraft.getMinecraft().player, type);
+		List<String> rawTip = stack.getTooltip(Minecraft.getMinecraft().thePlayer, type.isAdvanced());
 		List<Text> tip = rawTip.stream().map(Text::literal).map(t -> t.formatted(Formatting.GRAY)).collect(Collectors.toList());
 		if (!tip.isEmpty()) {
-			tip.set(0, ((MutableText) tip.get(0)).formatted(Formatting.byName(stack.getItem().getForgeRarity(stack).getColor().name())));
+			tip.set(0, ((MutableText) tip.get(0)).formatted(Formatting.byName(stack.getItem().getRarity(stack).rarityColor.name())));
 		}
 		return tip;
 	}
 
 	public static boolean hasFocusedTextReflectField(Object parent) {
 		// Haha, I'm in danger
-        if (parent instanceof ParentElement) {
-            return false;
-        }
+		if (parent instanceof ParentElement) {
+			return false;
+		}
 		for (java.lang.reflect.Field f : parent.getClass().getDeclaredFields()) {
 			f.setAccessible(true);
 			if (!GuiTextField.class.isAssignableFrom(f.getType())) {
@@ -318,5 +367,16 @@ public class RetroEMI {
 			}
 		}
 		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<ModelDeserializer.ModelElement> getModelElements(JSONModel model) {
+		try {
+			Field f = JSONModel.class.getDeclaredField("elements");
+			f.setAccessible(true);
+			return (List<ModelDeserializer.ModelElement>) f.get(model);
+		} catch (Exception e) {
+			return Collections.emptyList();
+		}
 	}
 }

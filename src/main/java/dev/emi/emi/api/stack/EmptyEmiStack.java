@@ -11,6 +11,7 @@ import shim.net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import shim.net.minecraft.item.ItemStacks;
 import shim.net.minecraft.text.Text;
 
 @ApiStatus.Internal
@@ -57,12 +58,12 @@ public class EmptyEmiStack extends EmiStack {
 
 	@Override
 	public Object getKey() {
-		return Blocks.AIR;
+		return Blocks.air;
 	}
 
 	@Override
 	public ItemStack getItemStack() {
-		return ItemStack.EMPTY;
+		return ItemStacks.EMPTY;
 	}
 
 	@Override
@@ -94,11 +95,11 @@ public class EmptyEmiStack extends EmiStack {
 		return EmiPort.literal("");
 	}
 
-    @Override
-    public int getSubtype() {
-        return 0;
-    }
+	@Override
+	public int getSubtype() {
+		return 0;
+	}
 
-    static class EmptyEntry {
+	static class EmptyEntry {
 	}
 }

@@ -109,7 +109,7 @@ public interface StandardRecipeHandler<T extends Container> extends EmiRecipeHan
 		context.resetColor();
 	}
 
-    static Map<EmiIngredient, Boolean> getAvailable(EmiRecipe recipe, EmiPlayerInventory inventory) {
+	static Map<EmiIngredient, Boolean> getAvailable(EmiRecipe recipe, EmiPlayerInventory inventory) {
 		Map<EmiIngredient, Boolean> availableForCrafting = new IdentityHashMap<>();
 		List<Boolean> list = inventory.getCraftAvailability(recipe);
 		List<EmiIngredient> inputs = recipe.getInputs();

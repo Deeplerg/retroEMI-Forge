@@ -1,33 +1,40 @@
 package dev.emi.emi.platform.forge;
 
 import com.rewindmc.retroemi.RetroEMI;
+import cpw.mods.fml.common.FMLCommonHandler;
+import dev.emi.emi.nemi.NemiPlugin;
 import dev.emi.emi.network.EmiNetwork;
 import dev.emi.emi.network.PingS2CPacket;
+import dev.emi.emi.platform.EmiAgnos;
 import dev.emi.emi.platform.EmiMain;
 import dev.emi.emi.registry.EmiCommands;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 @Mod(
 	modid = "emi",
 	name = "EMI",
 	guiFactory = "dev.emi.emi.platform.forge.EmiGuiFactory",
-	dependencies =
-		"required-after:mixinbooter@[4.2,);" +
-		"after:jei;"
+	dependencies = """
+			required-after:gtnhlib@[0.6.0,);\
+			before:unimixins@[0.1,);\
+			"""
 )
 public class EmiForge {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		if (EmiAgnos.isModLoaded("NotEnoughItems")) {
+			NemiPlugin.onLoad();
+		}
 	}
 
 	@Mod.EventHandler
@@ -42,6 +49,7 @@ public class EmiForge {
 			EmiPacketHandler.CHANNEL.sendTo(EmiPacketHandler.wrap(packet), player);
 		});
 		MinecraftForge.EVENT_BUS.register(this);
+		FMLCommonHandler.instance().bus().register(this);
 	}
 
 	@Mod.EventHandler

@@ -2,8 +2,8 @@ package dev.emi.emi.api.stack;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Represents a type that can be implicitly converted into an EmiStack.
@@ -26,7 +26,7 @@ public interface EmiStackConvertible {
 	 * @return The default representation of this type as an EmiStack.
 	 * Uses the provided amount.
 	 */
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	@ApiStatus.Experimental
 	default EmiStack emi(long amount) {
 		throw new IllegalStateException();

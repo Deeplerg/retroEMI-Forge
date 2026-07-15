@@ -78,8 +78,8 @@ public class EmiRecipeCategory implements EmiRenderable {
 			list.add(TooltipComponent.of(EmiPort.ordered(EmiPort.literal(id.toString(), Formatting.DARK_GRAY))));
 		}
 		if (EmiConfig.appendModId) {
-			list.add(TooltipComponent.of(EmiPort.ordered(EmiPort.literal(EmiUtil.getModName(getId().getNamespace()),
-                Formatting.BLUE, Formatting.ITALIC))));
+			list.add(TooltipComponent.of(EmiPort.ordered(EmiPort.literal(EmiUtil.getModName(getId().getResourceDomain()),
+				Formatting.BLUE, Formatting.ITALIC))));
 		}
 		return list;
 	}

@@ -176,8 +176,8 @@ public class EmiChess {
 	private static void invitePlayer() {
 		Minecraft client = Minecraft.getMinecraft();
 		String name = EmiScreenManager.search.getText();
-		for (EntityPlayer player : (List<EntityPlayer>) client.world.playerEntities) {
-			if (player.getName().equals(name)) {
+		for (EntityPlayer player : (List<EntityPlayer>) client.theWorld.playerEntities) {
+			if (player.getCommandSenderName().equals(name)) {
 				get().opponent = player.getUniqueID();
 				sendNetwork(player.getUniqueID(), -1, 0, 0);
 			}
@@ -190,7 +190,7 @@ public class EmiChess {
 
 	public static void receiveNetwork(UUID uuid, int type, int start, int end) {
 		Minecraft client = Minecraft.getMinecraft();
-		EntityPlayer player = client.world.getPlayerEntityByUUID(uuid);
+		EntityPlayer player = client.theWorld.func_152378_a(uuid);
 		if (player == null) {
 			return;
 		}
@@ -198,7 +198,7 @@ public class EmiChess {
 		if (type == -1) {
 			if (EmiScreenManager.hasSidebarAvailable(SidebarType.CHESS)) {
 				chess.pending = uuid;
-                client.player.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.invited", player.getName()).asString());
+				client.thePlayer.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.invited", player.getCommandSenderName()).asString());
 			} else {
 				sendNetwork(uuid, -4, 0, 0);
 			}
@@ -207,18 +207,18 @@ public class EmiChess {
 				sendNetwork(uuid, -3, 0, 0);
 			} else {
 				if (uuid.equals(chess.opponent)) {
-					client.player.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.accepted", player.getName()).asString());
+					client.thePlayer.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.accepted", player.getCommandSenderName()).asString());
 					chess.generator = new NetworkedMoveGenerator(PieceColor.BLACK);
 				}
 			}
 		} else if (type == -3) {
 			if (uuid.equals(chess.opponent)) {
-				client.player.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.cancelled", player.getName()).asString());
+				client.thePlayer.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.cancelled", player.getCommandSenderName()).asString());
 				restart();
 			}
 		} else if (type == -4) {
 			if (uuid.equals(chess.opponent)) {
-				client.player.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.unavailable", player.getName()).asString());
+				client.thePlayer.sendChatMessage(EmiPort.translatable("emi.chess.multiplayer.unavailable", player.getCommandSenderName()).asString());
 			}
 		} else if (chess.generator instanceof NetworkedMoveGenerator nmg && chess.opponent.equals(uuid)) {
 			ChessMove desired = ChessMove.of(start, end, type);

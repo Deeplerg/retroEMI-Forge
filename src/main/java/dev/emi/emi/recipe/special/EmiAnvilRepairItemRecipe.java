@@ -82,7 +82,7 @@ public class EmiAnvilRepairItemRecipe implements EmiRecipe {
 	}
 
 	private ItemStack getMergeItems(List<ItemStack> items) {
-		ItemStack item = tool.getDefaultInstance();
+		ItemStack item = new ItemStack(tool);
 		int maxDamage = item.getMaxDamage();
 		int damage = items.get(0).getItemDamage() - (21 * maxDamage)/20 + items.get(1).getItemDamage();
 		if (damage > 0) {
@@ -92,7 +92,7 @@ public class EmiAnvilRepairItemRecipe implements EmiRecipe {
 	}
 
 	private ItemStack getTool(Random r) {
-		ItemStack stack = tool.getDefaultInstance();
+		ItemStack stack = new ItemStack(tool);
 		if (stack.getMaxDamage() <= 0) {
 			return stack;
 		}

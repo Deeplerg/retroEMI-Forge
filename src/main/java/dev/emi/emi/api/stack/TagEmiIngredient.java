@@ -1,12 +1,23 @@
 package dev.emi.emi.api.stack;
 
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
+import org.joml.Matrix4f;
+
 import com.google.common.collect.Lists;
+
+import com.gtnewhorizon.gtnhlib.client.model.ItemContext;
+import com.gtnewhorizon.gtnhlib.client.model.baked.BakedModel;
+import com.gtnewhorizon.gtnhlib.client.renderer.cel.model.quad.ModelQuadView;
+import com.gtnewhorizon.gtnhlib.client.renderer.cel.model.quad.properties.ModelQuadFacing;
+
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.EmiRenderHelper;
 import dev.emi.emi.EmiUtil;
 import dev.emi.emi.api.render.EmiRender;
 import dev.emi.emi.config.EmiConfig;
-import dev.emi.emi.mixin.accessor.RenderItemAccessor;
 import dev.emi.emi.platform.EmiAgnos;
 import dev.emi.emi.registry.EmiTags;
 import dev.emi.emi.runtime.EmiDrawContext;
@@ -16,20 +27,13 @@ import dev.emi.emi.screen.tooltip.RemainderTooltipComponent;
 import dev.emi.emi.screen.tooltip.TagTooltipComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.ApiStatus;
-import org.joml.Matrix4f;
 import shim.net.minecraft.client.gui.DrawContext;
 import shim.net.minecraft.client.gui.tooltip.TooltipComponent;
 import shim.net.minecraft.registry.tag.TagKey;
 import shim.net.minecraft.util.Formatting;
-
-import java.util.List;
-import java.util.Optional;
 
 @ApiStatus.Internal
 public class TagEmiIngredient implements EmiIngredient {
@@ -118,31 +122,37 @@ public class TagEmiIngredient implements EmiIngredient {
 					stacks.get(0).render(context.raw(), x, y, delta, -1 ^ RENDER_AMOUNT);
 				}
 			} else {
-				IBakedModel model = EmiAgnos.getBakedTagModel(tagKey.getCustomModel());
+				BakedModel model = EmiAgnos.getBakedTagModel(tagKey.getCustomModel());
+
+				boolean useItemsMap = "missingno".equals(client.getTextureMapBlocks().getAtlasSprite(stacks.get(0).getItemStack().getItem()
+					.getIcon(stacks.get(0).getItemStack(), 0).getIconName()).getIconName());
 
 				context.matrices().push();
-				client.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+				client.getTextureManager().bindTexture(useItemsMap ? TextureMap.locationItemsTexture : TextureMap.locationBlocksTexture);
 				context.matrices().translate(x + 8, y + 8, 150);
 				context.matrices().multiplyPositionMatrix(new Matrix4f().scaling(1.0f, -1.0f, 1.0f));
 				context.matrices().scale(16.0f, 16.0f, 16.0f);
-
-				model.getItemCameraTransforms().getTransform(ItemCameraTransforms.TransformType.GUI).apply(Optional.empty());
 				context.matrices().translate(-0.5f, -0.5f, -0.5f);
 
-				if (!model.isGui3d()) {
-					RenderHelper.enableGUIStandardItemLighting();
+				RenderHelper.enableGUIStandardItemLighting();
+				context.enableBlend();
+
+				ItemContext ictx = new ItemContext();
+				Tessellator tess = Tessellator.instance;
+				tess.startDrawingQuads();
+
+				for (ModelQuadFacing dir : ModelQuadFacing.VALUES) {
+					ictx.quadFacing = dir;
+					for (ModelQuadView quad : model.getQuads(ictx)) {
+						for (int i = 0; i < 4; i++) {
+							tess.addVertexWithUV(quad.getX(i), quad.getY(i), quad.getZ(i), quad.getTexU(i), quad.getTexV(i));
+						}
+					}
 				}
-//				VertexConsumerProvider.Immediate immediate = context.raw().getVertexConsumers();
 
-				((RenderItemAccessor) client.getRenderItem())
-					.invokeRenderBakedItemModel(model,
-						ItemStack.EMPTY);
-//				immediate.draw();
-
-				if (!model.isGui3d()) {
-					RenderHelper.enableGUIStandardItemLighting();
-				}
-
+				EmiPort.draw(tess);
+				context.disableBlend();
+				RenderHelper.disableStandardItemLighting();
 				context.matrices().pop();
 			}
 		}
@@ -172,7 +182,7 @@ public class TagEmiIngredient implements EmiIngredient {
 //			list.add(TooltipComponent.of(EmiPort.ordered(EmiRenderHelper.getAmountText(this, amount))));
 //		}
 		if (EmiConfig.appendModId) {
-			String mod = EmiUtil.getModName(id.getNamespace());
+			String mod = EmiUtil.getModName(id.getResourceDomain());
 			list.add(TooltipComponent.of(EmiPort.ordered(EmiPort.literal(mod, Formatting.BLUE, Formatting.ITALIC))));
 		}
 		list.add(new TagTooltipComponent(stacks));

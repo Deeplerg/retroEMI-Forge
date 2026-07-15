@@ -1,8 +1,8 @@
 package shim.net.minecraft.client.gui.widget;
 
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import shim.net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.GuiButton;
 import shim.net.minecraft.client.gui.tooltip.TooltipComponent;
@@ -35,12 +35,13 @@ public class ButtonWidget extends ClickableWidget {
 
 	@Override
 	public void renderWidget(DrawContext raw, int mouseX, int mouseY, float tickDelta) {
-		delegate.x = getX();
-		delegate.y = getY();
+		delegate.xPosition = getX();
+		delegate.yPosition = getY();
 		delegate.width = width;
 		delegate.height = height;
 		delegate.displayString = getMessage().asString();
-		delegate.drawButton(Minecraft.getMinecraft(), mouseX, mouseY, tickDelta);
+		delegate.enabled = this.active;
+		delegate.drawButton(Minecraft.getMinecraft(), mouseX, mouseY);
 	}
 
 	@Override

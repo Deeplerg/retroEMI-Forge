@@ -2,7 +2,6 @@ package dev.emi.emi.api.stack;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -20,19 +19,18 @@ import dev.emi.emi.screen.StackBatcher.Batchable;
 import dev.emi.emi.screen.tooltip.EmiTextTooltipWrapper;
 import dev.emi.emi.search.EmiSearch;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import shim.com.mojang.blaze3d.systems.RenderSystem;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import shim.net.minecraft.client.gui.DrawContext;
 import shim.net.minecraft.client.gui.tooltip.OrderedTextTooltipComponent;
 import shim.net.minecraft.client.gui.tooltip.TooltipComponent;
 import shim.net.minecraft.client.item.TooltipContext;
 import shim.net.minecraft.client.render.VertexConsumerProvider;
+import shim.net.minecraft.item.ItemStacks;
 import shim.net.minecraft.registry.tag.ItemKey;
 import shim.net.minecraft.text.Text;
 import shim.net.minecraft.util.Formatting;
@@ -49,7 +47,7 @@ public class ItemEmiStack extends EmiStack implements Batchable {
 	private boolean unbatchable;
 
 	public ItemEmiStack(ItemStack stack) {
-		this(stack, stack.getCount());
+		this(stack, stack.stackSize);
 	}
 
 	public ItemEmiStack(ItemStack stack, long amount) {
@@ -83,7 +81,7 @@ public class ItemEmiStack extends EmiStack implements Batchable {
 
 	@Override
 	public boolean isEmpty() {
-		return amount == 0 || getItemStack().isEmpty();
+		return amount == 0 || ItemStacks.isEmpty(getItemStack());
 	}
 
 	@Override
@@ -111,7 +109,7 @@ public class ItemEmiStack extends EmiStack implements Batchable {
 
 	@Override
 	public ResourceLocation getId() {
-		return EmiPort.getItemRegistry().getNameForObject(item);
+		return EmiPort.id(EmiPort.getItemRegistry().getNameForObject(item));
 	}
 
 	@Override
@@ -131,7 +129,7 @@ public class ItemEmiStack extends EmiStack implements Batchable {
 		EmiDrawContext context = EmiDrawContext.wrap(draw);
 		ItemStack stack = getItemStack();
 		if ((flags & RENDER_ICON) != 0) {
-			GlStateManager.enableRescaleNormal();
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 			context.enableDepthTest();
 			RenderHelper.enableGUIStandardItemLighting();
 			if (stack.getItemDamage() == 32767) stack.setItemDamage(0);
@@ -153,14 +151,13 @@ public class ItemEmiStack extends EmiStack implements Batchable {
 
 	@Override
 	public boolean isSideLit() {
-		return client.getRenderItem().getItemModelWithOverrides(getItemStack(), null, null).isGui3d();
+		return RetroEMI.isSideLit(getItemStack());
 	}
 
 	@Override
 	public boolean isUnbatchable() {
 		ItemStack stack = getItemStack();
-		return unbatchable || stack.isItemEnchanted() || stack.isItemDamaged() || !EmiAgnos.canBatch(stack)
-			|| client.getRenderItem().getItemModelWithOverrides(getItemStack(), null, null).isBuiltInRenderer();
+		return unbatchable || stack.isItemEnchanted() || stack.isItemDamaged() || !EmiAgnos.canBatch(stack);
 	}
 
 	@Override
@@ -170,23 +167,23 @@ public class ItemEmiStack extends EmiStack implements Batchable {
 
 	@Override
 	public void renderForBatch(VertexConsumerProvider vcp, DrawContext draw, int x, int y, int z, float delta) {
-		EmiDrawContext context = EmiDrawContext.wrap(draw);
-		ItemStack stack = getItemStack();
-		RenderItem ir = client.getRenderItem();
-		IBakedModel model = ir.getItemModelWithOverrides(stack, null, null);
-		context.push();
-		try {
-			client.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			GlStateManager.enableRescaleNormal();
-			RenderSystem.enableBlend();
-			RenderHelper.enableGUIStandardItemLighting();
-			context.matrices().translate(x, y, 100.0f + z + 0);
-			context.matrices().translate(8.0, 8.0, 0.0);
-			context.matrices().scale(16.0f, -16.0f, 16.0f);
-			ir.renderItem(stack, model);
-		} finally {
-			context.pop();
-		}
+//		EmiDrawContext context = EmiDrawContext.wrap(draw);
+//		ItemStack stack = getItemStack();
+//		RenderItem ir = client.getRenderItem();
+//		IBakedModel model = ir.getItemModelWithOverrides(stack, null, null);
+//		context.push();
+//		try {
+//			client.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+//			GlStateManager.enableRescaleNormal();
+//			RenderSystem.enableBlend();
+//			RenderHelper.enableGUIStandardItemLighting();
+//			context.matrices().translate(x, y, 100.0f + z + 0);
+//			context.matrices().translate(8.0, 8.0, 0.0);
+//			context.matrices().scale(16.0f, -16.0f, 16.0f);
+//			ir.renderItem(stack, model);
+//		} finally {
+//			context.pop();
+//		}
 	}
 
 	@Override
@@ -204,7 +201,7 @@ public class ItemEmiStack extends EmiStack implements Batchable {
 				list.set(0, new EmiTextTooltipWrapper(this, ottc));
 			}
 			if (EmiConfig.appendItemModId && EmiConfig.appendModId && Thread.currentThread() != EmiSearch.searchThread) {
-				String namespace = EmiPort.getItemRegistry().getNameForObject(stack.getItem()).getNamespace();
+				String namespace = EmiPort.id(EmiPort.getItemRegistry().getNameForObject(stack.getItem())).getResourceDomain();
 				String mod = EmiUtil.getModName(namespace);
 				list.add(TooltipComponent.of(EmiPort.literal(mod, Formatting.BLUE, Formatting.ITALIC)));
 			}

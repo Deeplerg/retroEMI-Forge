@@ -31,7 +31,7 @@ public class EmiCookingRecipe implements EmiRecipe {
 		this.category = category;
 		input = recipe.getIngredients();
 		output = EmiStack.of(recipe.getOutput());
-		if (input.getEmiStacks().get(0).getItemStack().isItemEqual(new ItemStack(Blocks.SPONGE, 1, 1))) {
+		if (input.getEmiStacks().get(0).getItemStack().isItemEqual(new ItemStack(Blocks.sponge, 1, 1))) {
 			input.getEmiStacks().get(0).setRemainder(EmiStack.of(FluidRegistry.WATER, FluidUnit.BUCKET));
 		}
 		this.recipe = recipe;

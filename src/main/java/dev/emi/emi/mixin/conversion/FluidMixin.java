@@ -7,13 +7,13 @@ import net.minecraftforge.fluids.Fluid;
 
 @Mixin(Fluid.class)
 public class FluidMixin implements EmiStackConvertible {
-    @Override
-    public EmiStack emi() {
-        return EmiStack.of((Fluid) (Object) this);
-    }
+	@Override
+	public EmiStack emi() {
+		return EmiStack.of((Fluid) (Object) this);
+	}
 
-    @Override
-    public EmiStack emi(long amount) {
-        return EmiStack.of((Fluid) (Object) this, amount);
-    }
+	@Override
+	public EmiStack emi(long amount) {
+		return EmiStack.of((Fluid) (Object) this, amount);
+	}
 }

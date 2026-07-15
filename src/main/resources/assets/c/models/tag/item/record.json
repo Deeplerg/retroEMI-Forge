@@ -1,7 +1,7 @@
 {
   "parent": "emi:item/half_item",
   "textures": {
-    "first": "minecraft:items/record_13",
-    "second": "minecraft:items/record_stal"
+    "first": "minecraft:record_13",
+    "second": "minecraft:record_stal"
   }
 }

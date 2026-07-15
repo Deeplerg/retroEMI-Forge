@@ -1,16 +1,16 @@
 package com.rewindmc.retroemi;
 
-import java.io.IOException;
 import java.util.List;
 
+import dev.emi.emi.platform.EmiAgnos;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import shim.org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.google.common.collect.Lists;
-
-import net.minecraft.client.renderer.GlStateManager;
 
 import dev.emi.emi.input.EmiInput;
 import dev.emi.emi.runtime.EmiDrawContext;
@@ -50,7 +50,7 @@ public class REMIScreen extends GuiScreen implements ParentElement {
 
 	@Override
 	public final void drawScreen(int var1, int var2, float var3) {
-		GlStateManager.enableRescaleNormal();
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		render(DrawContext.INSTANCE, var1, var2, var3);
 		super.drawScreen(var1, var2, var3);
 		if (mouseDown != -1) {
@@ -58,25 +58,30 @@ public class REMIScreen extends GuiScreen implements ParentElement {
 		}
 		lastMouseX = var1;
 		lastMouseY = var2;
-		GlStateManager.disableRescaleNormal();
+		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 	}
 
 	@Override
-	public void handleKeyboardInput() throws IOException {
+	public void handleKeyboardInput() {
 		super.handleKeyboardInput();
 		int k = Keyboard.getEventKey();
 		char c = Keyboard.getEventCharacter();
-		if (!Keyboard.getEventKeyState() || k == 0 && Character.isDefined(c)) {
-			keyReleased(Keyboard.getEventKey(), 0, EmiInput.getCurrentModifiers());
+		int mod = EmiInput.getCurrentModifiers();
+		if (!Keyboard.getEventKeyState() && k == 0 && !Character.isISOControl(c)) {
+			charTyped(c, mod);
+		}
+		if (k == 0 || !Keyboard.getEventKeyState()) {
+			keyReleased(k, 0, mod);
 		}
 	}
 
 	@Override
-	public void handleMouseInput() throws IOException {
+	public void handleMouseInput() {
 		super.handleMouseInput();
 		if (Mouse.getEventDWheel() != 0) {
-			// If it is lwjgl3, dividing by 120D is not necessary
-			mouseScrolled(lastMouseX, lastMouseY, Mouse.getEventDWheel() / 120D);
+            double factor = 1D;
+            if (!EmiAgnos.isModLoaded("lwjgl3ify")) factor = 120D;
+			mouseScrolled(lastMouseX, lastMouseY, Mouse.getEventDWheel() / factor);
 		}
 	}
 
@@ -102,7 +107,7 @@ public class REMIScreen extends GuiScreen implements ParentElement {
 	}
 
 	@Override
-	public final void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+	public final void mouseMovedOrUp(int mouseX, int mouseY, int mouseButton) {
 		mouseReleased((double) mouseX, (double) mouseY, mouseButton);
 		if (mouseButton == mouseDown) {
 			mouseDown = -1;

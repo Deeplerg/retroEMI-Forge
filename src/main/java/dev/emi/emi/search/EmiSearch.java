@@ -81,11 +81,11 @@ public class EmiSearch {
 				}
 				ResourceLocation id = stack.getId();
 				if (id != null) {
-					mods.add(searchStack, EmiUtil.getModName(id.getNamespace()).toLowerCase());
-					mods.add(searchStack, id.getNamespace().toLowerCase());
-					names.add(searchStack, id.getPath().toLowerCase());
+					mods.add(searchStack, EmiUtil.getModName(id.getResourceDomain()).toLowerCase());
+					mods.add(searchStack, id.getResourceDomain().toLowerCase());
+					names.add(searchStack, id.getResourcePath().toLowerCase());
 				}
-				if (stack instanceof ItemEmiStack && stack.getItemStack().getItem() == Items.ENCHANTED_BOOK) {
+				if (stack instanceof ItemEmiStack && stack.getItemStack().getItem() == Items.enchanted_book) {
 					NBTTagList enchantments = stack.getNbt() != null ?
 						stack.getNbt().getTagList("StoredEnchantments", 10) : null;
 
@@ -93,7 +93,7 @@ public class EmiSearch {
 						for (int i = 0; i < enchantments.tagCount(); i++) {
 							NBTTagCompound enchantmentTag = enchantments.getCompoundTagAt(i);
 							int enchantmentId = enchantmentTag.getShort("id");
-							Enchantment enchantment = Enchantment.getEnchantmentByID(enchantmentId);
+							Enchantment enchantment = Enchantment.enchantmentsList[enchantmentId];
 
 							if (enchantment != null) {
 								String enchantmentName = enchantment.getName();

@@ -43,6 +43,7 @@ import dev.emi.emi.config.SidebarTheme;
 import dev.emi.emi.config.SidebarType;
 import dev.emi.emi.input.EmiBind;
 import dev.emi.emi.input.EmiInput;
+import dev.emi.emi.mixin.accessor.GuiContainerAccessor;
 import dev.emi.emi.mixin.accessor.PlayerControllerMPAccessor;
 import dev.emi.emi.network.CreateItemC2SPacket;
 import dev.emi.emi.network.EmiNetwork;
@@ -74,12 +75,11 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketChatMessage;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.network.play.client.C01PacketChatMessage;
+import net.minecraft.util.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import shim.com.mojang.blaze3d.systems.RenderSystem;
 import shim.net.minecraft.client.gui.Element;
@@ -87,6 +87,7 @@ import shim.net.minecraft.client.gui.ParentElement;
 import shim.net.minecraft.client.gui.tooltip.TooltipComponent;
 import shim.net.minecraft.client.gui.widget.TextFieldWidget;
 import shim.net.minecraft.client.util.math.MatrixStack;
+import shim.net.minecraft.item.ItemStacks;
 import shim.net.minecraft.text.Text;
 import shim.net.minecraft.util.Formatting;
 import shim.org.lwjgl.glfw.GLFW;
@@ -99,7 +100,7 @@ public class EmiScreenManager {
 	private static List<? extends EmiIngredient> searchedStacks = shim.java.List.of();
 	private static int lastWidth, lastHeight;
 	private static List<Bounds> lastExclusion;
-	private static StackBatcher.ClaimedCollection batchers = new StackBatcher.ClaimedCollection();
+//	private static StackBatcher.ClaimedCollection batchers = new StackBatcher.ClaimedCollection();
 	private static List<SidebarPanel> panels =  shim.java.List.of(
 			new SidebarPanel(SidebarSide.LEFT, EmiConfig.leftSidebarPages),
 			new SidebarPanel(SidebarSide.RIGHT, EmiConfig.rightSidebarPages),
@@ -180,7 +181,7 @@ public class EmiScreenManager {
 		int top = bounds.left();
 		int bottom = bounds.bottom();
 
-		batchers.unclaimAll();
+//		batchers.unclaimAll();
 
 		List<Bounds> spaceExclusion = Lists.newArrayList();
 		spaceExclusion.addAll(exclusion);
@@ -236,7 +237,7 @@ public class EmiScreenManager {
 		}
 		if (lastPlayerInventory == null || Math.abs(System.currentTimeMillis() - lastPlayerInventorySync) >= minDelay) {
 			lastPlayerInventorySync = System.currentTimeMillis();
-			EmiPlayerInventory inv = EmiPlayerInventory.of(client.player);
+			EmiPlayerInventory inv = EmiPlayerInventory.of(client.thePlayer);
 			SidebarPanel searchPanel = getSearchPanel();
 			if (!inv.isEqual(lastPlayerInventory)) {
 				lastPlayerInventory = inv;
@@ -342,14 +343,14 @@ public class EmiScreenManager {
 		int hr = xMax - tw * ENTRY_SIZE;
 		int tx = switch (align.horizontal) {
 			case LEFT -> hl;
-			case CENTER -> MathHelper.clamp(cx - (tw * ENTRY_SIZE) / 2, hl, hr);
+			case CENTER -> MathHelper.clamp_int(cx - (tw * ENTRY_SIZE) / 2, hl, hr);
 			case RIGHT -> hr;
 		};
 		int vt = yMin + headerOffset;
 		int vb = yMax - th * ENTRY_SIZE - subpanelHeight;
 		int ty = switch (align.vertical) {
 			case TOP -> vt;
-			case CENTER -> MathHelper.clamp(cy - (th * ENTRY_SIZE - headerOffset + subpanelHeight + theme.verticalPadding / 2) / 2, vt, vb);
+			case CENTER -> MathHelper.clamp_int(cy - (th * ENTRY_SIZE - headerOffset + subpanelHeight + theme.verticalPadding / 2) / 2, vt, vb);
 			case BOTTOM -> vb;
 		};
 		panel.header = header;
@@ -747,12 +748,12 @@ public class EmiScreenManager {
 
 	private static void renderCurrentTooltip(EmiDrawContext context, int mouseX, int mouseY, float delta, EmiScreenBase base) {
 		try {
-			ItemStack cursor = ItemStack.EMPTY;
+			ItemStack cursor = ItemStacks.EMPTY;
 			if (client.currentScreen instanceof GuiContainer handled) {
-				cursor = client.player.inventory.getItemStack();
+				cursor = client.thePlayer.inventory.getItemStack();
 			}
 			ScreenSpace space = getHoveredSpace(mouseX, mouseY);
-			if (EmiApi.isCheatMode() && cursor != null && !cursor.isEmpty() && space != null && space.getType() == SidebarType.INDEX && EmiConfig.deleteCursorStack.isBound()) {
+			if (EmiApi.isCheatMode() && cursor != null && !ItemStacks.isEmpty(cursor) && space != null && space.getType() == SidebarType.INDEX && EmiConfig.deleteCursorStack.isBound()) {
 				List<TooltipComponent> list = shim.java.List.of(
 					TooltipComponent.of(EmiPort.ordered(EmiPort.translatable("emi.delete_stack"))),
 					TooltipComponent.of(EmiPort.ordered(EmiConfig.deleteCursorStack.getBindText()))
@@ -763,7 +764,7 @@ public class EmiScreenManager {
 					EmiRenderHelper.drawTooltip(base.screen(), context, list, mouseX, mouseY);
 				}
 			}
-			if ((cursor == null || cursor.isEmpty()) && draggedStack.isEmpty()) {
+			if ((cursor == null || ItemStacks.isEmpty(cursor)) && draggedStack.isEmpty()) {
 				EmiProfiler.swap("hover");
 				try {
 					EmiIngredient hov = EmiStack.EMPTY;
@@ -885,21 +886,21 @@ public class EmiScreenManager {
 		}
 		if (base.screen() instanceof GuiContainer hs) {
 			context.push();
-			context.matrices().translate(hs.getGuiLeft(), hs.getGuiTop(), 0);
-			for (Slot slot : hs.inventorySlots.inventorySlots) {
-				if (!slot.isEnabled()) {
-					continue;
-				}
+			context.matrices().translate(((GuiContainerAccessor) hs).getGuiLeft(), ((GuiContainerAccessor) hs).getGuiTop(), 0);
+			for (Slot slot : (List<Slot>) hs.inventorySlots.inventorySlots) {
+//				if (!slot.isEnabled()) {
+//					continue;
+//				}
 				EmiStack stack = EmiStack.of(slot.getStack());
 				context.push();
 				context.matrices().translate(0, 0, 300);
 				if (query != null) {
 					if (!query.test(stack)) {
-						context.fill(slot.xPos - 1, slot.yPos - 1, 18, 18, 0x77000000);
+						context.fill(slot.xDisplayPosition - 1, slot.yDisplayPosition - 1, 18, 18, 0x77000000);
 					}
 				} else if (BoM.craftingMode && BoM.tree != null) {
 					if (!(slot.inventory instanceof InventoryPlayer) && !ignoredSlots.contains(slot) && synfavs.contains(stack)) {
-						context.fill(slot.xPos - 1, slot.yPos - 1, 18, 18, 0x7700BBFF);
+						context.fill(slot.xDisplayPosition - 1, slot.yDisplayPosition - 1, 18, 18, 0x7700BBFF);
 					}
 				}
 				context.pop();
@@ -1098,7 +1099,7 @@ public class EmiScreenManager {
 		}
 		if (draggedStack.isEmpty() && button == 0) {
 			if (client.currentScreen instanceof GuiContainer handled) {
-				if (!client.player.inventory.getItemStack().isEmpty()) {
+				if (!((ItemStacks.isEmpty(client.thePlayer.inventory.getItemStack())))) {
 					return false;
 				}
 			}
@@ -1318,7 +1319,7 @@ public class EmiScreenManager {
 				}
 				if (EmiRecipeFiller.performFill(context, EmiApi.getHandledScreen(), EmiCraftContext.Type.CRAFTABLE, destination, amount)) {
 					Minecraft.getMinecraft().getSoundHandler()
-							.playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+							.playSound(PositionedSoundRecord.func_147674_a(EmiPort.id("gui.button.press"), 1.0f));
 					return true;
 				}
 			}
@@ -1335,7 +1336,7 @@ public class EmiScreenManager {
 			repopulatePanels(SidebarType.FAVORITES);
 			return true;
 		} else if (function.apply(EmiConfig.copyId)) {
-			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(EmiPort.id("gui.button.press"), 1.0f));
 			StringSelection ss = new StringSelection("" + recipe.getId());
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, (ClipboardOwner) null);
 			return true;
@@ -1346,30 +1347,30 @@ public class EmiScreenManager {
 	public static void toggleVisibility(boolean notify) {
 		EmiConfig.enabled = !EmiConfig.enabled;
 		EmiConfig.writeConfig();
-		if (notify && !EmiConfig.enabled && EmiConfig.helpLevel.has(HelpLevel.VERBOSE)) {
-			client.getToastGui().add(new DisabledToast());
-		}
+//		if (notify && !EmiConfig.enabled && EmiConfig.helpLevel.has(HelpLevel.VERBOSE)) {
+//			client.getToastGui().add(new DisabledToast());
+//		}
 		if (EmiConfig.enabled) {
 			forceRecalculate();
 		}
 	}
 
 	private static boolean give(EmiStack stack, int amount, int mode) {
-		if (stack.getItemStack().isEmpty()) {
+		if (ItemStacks.isEmpty(stack.getItemStack())) {
 			return false;
 		}
 		ItemStack is = stack.getItemStack().copy();
-		is.setCount(amount);
-		if (mode == 1 && client.player.capabilities.isCreativeMode && client.currentScreen instanceof GuiContainerCreative) {
-			client.player.inventory.setItemStack(is);
+		is.stackSize = amount;
+		if (mode == 1 && client.thePlayer.capabilities.isCreativeMode && client.currentScreen instanceof GuiContainerCreative) {
+			client.thePlayer.inventory.setItemStack(is);
 			return true;
 		}
 		if (EmiClient.onServer) {
 			EmiNetwork.sendToServer(new CreateItemC2SPacket(mode, is));
 			return true;
 		} else {
-			if (!is.isEmpty()) {
-				String id = Item.REGISTRY.getNameForObject(is.getItem()).toString();
+			if (!(ItemStacks.isEmpty(is))) {
+				String id = Item.itemRegistry.getNameForObject(is.getItem()).toString();
 				String command = "/give @p " + id;
 				command += " " + amount + " " + is.getItemDamage();
 				if (is.hasTagCompound()) {
@@ -1377,7 +1378,7 @@ public class EmiScreenManager {
 					command += " " + nbt;
 				}
 				if (command.length() < 256) {
-                    ((PlayerControllerMPAccessor) client.playerController).getNetClientHandler().sendPacket(new CPacketChatMessage(command));
+					((PlayerControllerMPAccessor) client.playerController).getNetClientHandler().addToSendQueue(new C01PacketChatMessage(command));
 					return true;
 				}
 			}
@@ -1387,11 +1388,11 @@ public class EmiScreenManager {
 
 	private static boolean deleteCursor(int mx, int my) {
 		if (client.currentScreen instanceof GuiContainer handled) {
-			ItemStack cursor = client.player.inventory.getItemStack();
+			ItemStack cursor = client.thePlayer.inventory.getItemStack();
 			ScreenSpace space = getHoveredSpace(mx, my);
-			if (!cursor.isEmpty() && space != null && space.getType() == SidebarType.INDEX) {
-				client.player.inventory.setItemStack(ItemStack.EMPTY);
-				EmiNetwork.sendToServer(new CreateItemC2SPacket(1, ItemStack.EMPTY));
+			if (!ItemStacks.isEmpty(cursor) && space != null && space.getType() == SidebarType.INDEX) {
+				client.thePlayer.inventory.setItemStack(ItemStacks.EMPTY);
+				EmiNetwork.sendToServer(new CreateItemC2SPacket(1, ItemStacks.EMPTY));
 				return true;
 			}
 		}
@@ -1704,7 +1705,7 @@ public class EmiScreenManager {
 	}
 
 	public static class ScreenSpace {
-		public final StackBatcher batcher = batchers.claim();
+		public final StackBatcher batcher = new StackBatcher();
 		private final Supplier<SidebarType> typeSupplier;
 		public final int tx, ty, tw, th;
 		public final int pageSize;

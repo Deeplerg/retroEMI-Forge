@@ -25,7 +25,7 @@ public class EmiExclusionAreas {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static List<Bounds> getExclusion(EmiScreenBase base) {
-        GuiScreen screen = base.screen();
+		GuiScreen screen = base.screen();
 		List<Bounds> list = Lists.newArrayList();
 		list.add(base.bounds());
 		// EMI buttons

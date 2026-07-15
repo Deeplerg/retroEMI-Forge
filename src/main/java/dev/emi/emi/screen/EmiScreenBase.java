@@ -3,11 +3,10 @@ package dev.emi.emi.screen;
 import com.google.common.collect.Lists;
 import dev.emi.emi.api.EmiScreenBoundsProvider;
 import dev.emi.emi.api.widget.Bounds;
-import dev.emi.emi.mixin.accessor.GuiRecipeBookAccessor;
+import dev.emi.emi.mixin.accessor.GuiContainerAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.recipebook.IRecipeShownListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,12 +83,12 @@ public class EmiScreenBase {
 		if (screen instanceof GuiContainer hs) {
 			if (hs.inventorySlots.inventorySlots != null && !hs.inventorySlots.inventorySlots.isEmpty()) {
 				int extra = 0;
-				if (screen instanceof IRecipeShownListener provider) {
-					if (((GuiRecipeBookAccessor) provider.func_194310_f()).getRecipeBook() != null && provider.func_194310_f().isVisible()) {
-						extra = 177;
-					}
-				}
-				Bounds bounds = new Bounds(hs.getGuiLeft() - extra, hs.getYSize(), hs.getXSize() + extra, hs.getGuiTop());
+//				if (screen instanceof IRecipeShownListener provider) {
+//					if (((GuiRecipeBookAccessor) provider.func_194310_f()).getRecipeBook() != null && provider.func_194310_f().isVisible()) {
+//						extra = 177;
+//					}
+//				}
+				Bounds bounds = new Bounds(((GuiContainerAccessor) hs).getGuiLeft() - extra, ((GuiContainerAccessor) hs).getYSize(), ((GuiContainerAccessor) hs).getXSize() + extra, ((GuiContainerAccessor) hs).getGuiTop());
 				return new EmiScreenBase(screen, bounds);
 			}
 		} else if (screen instanceof RecipeScreen rs) {

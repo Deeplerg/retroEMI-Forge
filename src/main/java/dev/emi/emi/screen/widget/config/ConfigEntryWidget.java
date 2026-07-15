@@ -22,6 +22,7 @@ public abstract class ConfigEntryWidget extends Entry {
 	private final int height;
 	public ConfigGroup group;
 	public boolean endGroup = false;
+	public boolean disabled = false;
 	private List<? extends Element> children = Collections.emptyList();
 	public List<GroupNameWidget> parentGroups = Lists.newArrayList();
 
@@ -55,7 +56,7 @@ public abstract class ConfigEntryWidget extends Entry {
 		}
 		update(y, x, width, height);
 		context.fill(x, y, width, height, 0x66000000);
-		context.drawTextWithShadow(this.name, x + 6, y + 10 - parentList.client.fontRenderer.FONT_HEIGHT / 2, 0xFFFFFF);
+		context.drawTextWithShadow(this.name, x + 6, y + 10 - parentList.client.fontRenderer.FONT_HEIGHT / 2, disabled ? 0x707070 : 0xFFFFFF);
 		for (Element element : children()) {
 			if (element instanceof Drawable drawable) {
 				drawable.render(context.raw(), mouseX, mouseY, delta);

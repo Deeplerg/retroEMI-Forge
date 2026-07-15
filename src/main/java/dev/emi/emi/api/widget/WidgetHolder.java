@@ -122,15 +122,14 @@ public interface WidgetHolder {
 			time, horizontal, endToStart, fullToEmpty);
 	}
 
-    /**
-     * @param tickTime Animation time, in ticks
-     */
-
-    default CustomAnimatedTextureWidget addCustomAnimatedTexture(ResourceLocation texture, int x, int y, int width, int height, int u, int v, int regionWidth,
-                                                                 int regionHeight, int textureWidth, int textureHeight, int tickTime, int count) {
-        return add(
-            new CustomAnimatedTextureWidget(texture, x, y, width, height, u, v, regionWidth, regionHeight, textureWidth, textureHeight, tickTime, count));
-    }
+	/**
+	 * @param tickTime Animation time, in ticks
+	 */
+	default CustomAnimatedTextureWidget addCustomAnimatedTexture(ResourceLocation texture, int x, int y, int width, int height, int u, int v, int regionWidth,
+		int regionHeight, int textureWidth, int textureHeight, int tickTime, int count) {
+		return add(
+			new CustomAnimatedTextureWidget(texture, x, y, width, height, u, v, regionWidth, regionHeight, textureWidth, textureHeight, tickTime, count));
+	}
 
 	/**
 	 * @param tickTime Animation time, in ticks

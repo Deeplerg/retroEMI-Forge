@@ -2,15 +2,15 @@ package com.rewindmc.retroemi;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import com.gtnewhorizon.gtnhmixins.IEarlyMixinLoader;
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
-import zone.rong.mixinbooter.IEarlyMixinLoader;
 
 @IFMLLoadingPlugin.Name("RetroEMI")
-@IFMLLoadingPlugin.MCVersion(ForgeVersion.mcVersion)
+@IFMLLoadingPlugin.MCVersion("1.7.10")
 public class REMILoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
 	public REMILoadingPlugin() {
@@ -33,18 +33,21 @@ public class REMILoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
 		return null;
 	}
 
-    @Override
-    public void injectData(Map<String, Object> data) {
-
-    }
-
-    @Override
-	public String getAccessTransformerClass() {
-		return null;
+	@Override
+	public void injectData(Map<String, Object> data) {
 	}
 
 	@Override
-	public List<String> getMixinConfigs() {
-		return shim.java.List.of("emi.mixins.json");
+	public String getAccessTransformerClass() {
+		return null;
+	}
+	@Override
+	public String getMixinConfig() {
+		return "emi.mixins.json";
+	}
+
+	@Override
+	public List<String> getMixins(Set<String> loadedCoreMods) {
+		return shim.java.List.of();
 	}
 }

@@ -68,7 +68,7 @@ public interface EmiStackSerializer<T extends EmiStack> extends EmiIngredientSer
 				/*if (changesJson != null) {
 					changes = ComponentChanges.CODEC.decode(withRegistryAccess(JsonOps.INSTANCE), changesJson).getOrThrow().getFirst();
 				} else */if (nbt != null) {
-					nbtComp = JsonToNBT.getTagFromJson(nbt);
+					nbtComp = (NBTTagCompound) JsonToNBT.func_150315_a(nbt);
 				}
 				EmiStack stack = create(id, nbtComp, amount, subtype);
 				if (chance != 1) {

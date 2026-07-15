@@ -8,13 +8,12 @@ import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.event.ClickEvent;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.IChatComponent;
 import shim.com.mojang.blaze3d.systems.RenderSystem;
 
 import org.lwjgl.BufferUtils;
@@ -69,7 +68,7 @@ public class EmiScreenshotRecorder {
 		MatrixStack backupProj = RenderSystem.getProjectionMatrix();
 		RenderSystem.setProjectionMatrix(new MatrixStack());
 
-		GlStateManager.ortho(0.0D, width, height, 0.0D, 1000.0D, 3000.0D);
+		GL11.glOrtho(0.0D, width, height, 0.0D, 1000.0D, 3000.0D);
 		MatrixStack view = RenderSystem.getModelViewStack();
 		RenderSystem.getModelViewStack();
 		view.pushMatrix();
@@ -87,11 +86,11 @@ public class EmiScreenshotRecorder {
 		framebuffer.unbindFramebuffer();
 		client.getFramebuffer().bindFramebuffer(true);
 
-		saveScreenshotInner(client.gameDir, path, framebuffer,
+		saveScreenshotInner(client.mcDataDir, path, framebuffer,
 			message -> client.ingameGUI.getChatGUI().printChatMessage(message));
 	}
 
-	private static void saveScreenshotInner(File gameDirectory, String suggestedPath, Framebuffer framebuffer, Consumer<ITextComponent> messageReceiver) {
+	private static void saveScreenshotInner(File gameDirectory, String suggestedPath, Framebuffer framebuffer, Consumer<IChatComponent> messageReceiver) {
 		BufferedImage nativeImage = takeScreenshot(framebuffer);
 
 		File screenshots = new File(gameDirectory, SCREENSHOTS_DIRNAME);
@@ -108,12 +107,12 @@ public class EmiScreenshotRecorder {
 		try {
 			ImageIO.write(nativeImage, "png", file);
 
-            ITextComponent text = new TextComponentString(filename)
-                .setStyle(new Style().setUnderlined(true).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath())));
-			messageReceiver.accept(new TextComponentTranslation("screenshot.success", text));
+			IChatComponent text = new ChatComponentText(filename)
+				.setChatStyle(new ChatStyle().setUnderlined(true).setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath())));
+			messageReceiver.accept(new ChatComponentTranslation("screenshot.success", text));
 		} catch (Throwable e) {
 			EmiLog.error("Failed to write screenshot", e);
-			messageReceiver.accept(new TextComponentTranslation("screenshot.failure", e.getMessage()));
+			messageReceiver.accept(new ChatComponentTranslation("screenshot.failure", e.getMessage()));
 		}
 	}
 
@@ -122,7 +121,7 @@ public class EmiScreenshotRecorder {
 		BufferedImage image = new BufferedImage(framebuffer.framebufferWidth, framebuffer.framebufferHeight, BufferedImage.TYPE_INT_ARGB);
 		ByteBuffer buffer = BufferUtils.createByteBuffer(framebuffer.framebufferWidth * framebuffer.framebufferHeight * 4);
 
-		GlStateManager.glReadPixels(0, 0, framebuffer.framebufferWidth, framebuffer.framebufferHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer.asIntBuffer());
+		GL11.glReadPixels(0, 0, framebuffer.framebufferWidth, framebuffer.framebufferHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer.asIntBuffer());
 
 		int[] data = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		for (int y = 0; y < framebuffer.framebufferHeight; y++) {

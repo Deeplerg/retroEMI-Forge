@@ -20,9 +20,10 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import shim.net.minecraft.item.ItemStacks;
 
 public class EmiStackProviders {
 	public static Map<Class<?>, List<EmiStackProvider<?>>> fromClass = Maps.newHashMap();
@@ -53,15 +54,15 @@ public class EmiStackProviders {
 			Slot s = handled.getTheSlot();
 			if (s != null) {
 				ItemStack stack = s.getStack();
-				if (!stack.isEmpty()) {
+				if (!ItemStacks.isEmpty(stack)) {
 					if (s instanceof SlotCrafting craf) {
 						// Emi be making assumptions
 						try {
-							InventoryCrafting inv = ((SlotCraftingAccessor) craf).getCraftMatrix();
+							InventoryCrafting inv = (InventoryCrafting) ((SlotCraftingAccessor) craf).getCraftMatrix();
 							Minecraft client = Minecraft.getMinecraft();
-							for (IRecipe r : ForgeRegistries.RECIPES.getValuesCollection()) {
-								if (r.matches(inv, client.world)) {
-                                    ResourceLocation id = EmiPort.getId(r);
+							for (IRecipe r : (List<IRecipe>) CraftingManager.getInstance().getRecipeList()) {
+								if (r.matches(inv, client.theWorld)) {
+									ResourceLocation id = EmiPort.getId(r);
 									EmiRecipe recipe = EmiApi.getRecipeManager().getRecipe(id);
 									if (recipe != null) {
 										return new EmiStackInteraction(EmiStack.of(stack), recipe, false);

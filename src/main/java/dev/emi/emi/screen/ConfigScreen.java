@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import shim.net.minecraft.client.gui.Element;
 import shim.org.lwjgl.glfw.GLFW;
 
 import com.google.common.collect.Lists;
@@ -245,7 +246,16 @@ public class ConfigScreen extends REMIScreen {
 						entry = new EnumWidget(translation, getFieldTooltip(field), searchSupplier, objectMutator(field), (Predicate<ConfigEnum>) predicate);
 					}
 					boolean endGroup = field.getAnnotation(ConfigGroupEnd.class) != null;
+					boolean disabled = field.getAnnotation(EmiConfig.ConfigDisabled.class) != null;
 					if (entry != null) {
+						entry.disabled = disabled;
+						if (disabled) {
+							for (Element child : entry.children()) {
+								if (child instanceof ButtonWidget b) {
+									b.active = false;
+								}
+							}
+						}
 						entry.group = currentGroup;
 						entry.endGroup = endGroup;
 						list.addEntry(entry);
@@ -414,7 +424,7 @@ public class ConfigScreen extends REMIScreen {
 				return false;
 			}
 			if (super.keyPressed(keyCode, scanCode, modifiers)) {
-				return super.keyPressed(keyCode, scanCode, modifiers);
+				return true;
 			}
 			if (this.getFocused() instanceof TextFieldWidget tfw && tfw.isFocused()) {
 				if (keyCode == GLFW.GLFW_KEY_ESCAPE) {

@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(ItemTool.class)
 public interface ItemToolAccessor {
-    @Accessor("toolMaterial")
-    Item.ToolMaterial getToolMaterial();
+	@Accessor("toolMaterial")
+	Item.ToolMaterial getToolMaterial();
 }

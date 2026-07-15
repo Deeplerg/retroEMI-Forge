@@ -49,7 +49,7 @@ public class EmiRegistryImpl implements EmiRegistry {
 
 	@Override
 	public CraftingManager getRecipeManager() {
-		return new CraftingManager();
+		return CraftingManager.getInstance();
 	}
 
 	@Override

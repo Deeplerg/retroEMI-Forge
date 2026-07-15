@@ -62,7 +62,7 @@ public class TagEmiIngredientSerializer implements EmiIngredientSerializer<TagEm
 			JsonObject json = new JsonObject();
 			json.addProperty("type", "tag");
 			json.addProperty("registry", stack.key.getType().toString());
-			json.addProperty("id", stack.key.id().getPath());
+			json.addProperty("id", stack.key.id().getResourcePath());
 			if (stack.getAmount() != 1) {
 				json.addProperty("amount", stack.getAmount());
 			}

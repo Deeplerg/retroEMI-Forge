@@ -9,8 +9,8 @@ public class AnimatedTextureWidget extends TextureWidget {
 	protected final boolean horizontal, endToStart, fullToEmpty;
 
 	public AnimatedTextureWidget(ResourceLocation texture, int x, int y, int width, int height, int u, int v,
-                                 int regionWidth, int regionHeight, int textureWidth, int textureHeight, int time,
-                                 boolean horizontal, boolean endToStart, boolean fullToEmpty) {
+			int regionWidth, int regionHeight, int textureWidth, int textureHeight, int time,
+			boolean horizontal, boolean endToStart, boolean fullToEmpty) {
 		super(texture, x, y, width, height, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
 		this.time = time;
 		this.horizontal = horizontal;
@@ -18,7 +18,7 @@ public class AnimatedTextureWidget extends TextureWidget {
 		this.fullToEmpty = fullToEmpty;
 	}
 	public AnimatedTextureWidget(ResourceLocation texture, int x, int y, int width, int height, int u, int v, int time,
-	boolean horizontal, boolean endToStart, boolean fullToEmpty) {
+			boolean horizontal, boolean endToStart, boolean fullToEmpty) {
 		this(texture, x, y, width, height, u, v, width, height, 256, 256, time, horizontal, endToStart, fullToEmpty);
 	}
 

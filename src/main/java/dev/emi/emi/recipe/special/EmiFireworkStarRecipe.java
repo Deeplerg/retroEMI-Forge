@@ -13,36 +13,36 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.GeneratedSlotWidget;
 import dev.emi.emi.api.widget.SlotWidget;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemDye;
 import net.minecraft.util.ResourceLocation;
 import shim.net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import shim.net.minecraft.util.DyeColor;
 
 public class EmiFireworkStarRecipe extends EmiPatternCraftingRecipe {
-	private static final List<DyeItem> DYES = Stream.of(EnumDyeColor.values()).map(DyeItem::byColor).collect(Collectors.toList());
+	private static final List<DyeItem> DYES = Stream.of(DyeColor.values()).map(DyeItem::byColor).collect(Collectors.toList());
 
 	private static final List<ItemStack> SHAPES =
-        shim.java.List.of(new ItemStack(Items.FIREWORK_CHARGE), new ItemStack(Items.FEATHER), new ItemStack(Items.GOLD_NUGGET), new ItemStack(Items.SKULL, 1, 0),
-					new ItemStack(Items.SKULL, 1, 1), new ItemStack(Items.SKULL, 1, 2), new ItemStack(Items.SKULL, 1, 3), new ItemStack(Items.SKULL, 1, 4));
+		shim.java.List.of(new ItemStack(Items.firework_charge), new ItemStack(Items.feather), new ItemStack(Items.gold_nugget), new ItemStack(Items.skull, 1, 0),
+					new ItemStack(Items.skull, 1, 1), new ItemStack(Items.skull, 1, 2), new ItemStack(Items.skull, 1, 3), new ItemStack(Items.skull, 1, 4));
 
-	private static final List<Item> EFFECTS = shim.java.List.of(Items.DIAMOND, Items.GLOWSTONE_DUST);
+	private static final List<Item> EFFECTS = shim.java.List.of(Items.diamond, Items.glowstone_dust);
 
 	public EmiFireworkStarRecipe(ResourceLocation id) {
 		super(shim.java.List.of(
 				EmiIngredient.of(DYES.stream().map(i -> (EmiIngredient) EmiStack.of(i)).collect(Collectors.toList())),
 						EmiIngredient.of(SHAPES.stream().map(i -> (EmiIngredient) EmiStack.of(i)).collect(Collectors.toList())),
 						EmiIngredient.of(EFFECTS.stream().map(i -> (EmiIngredient) EmiStack.of(i)).collect(Collectors.toList())),
-						EmiStack.of(Items.GUNPOWDER)),
-				EmiStack.of(Items.FIREWORK_CHARGE), id);
+						EmiStack.of(Items.gunpowder)),
+				EmiStack.of(Items.firework_charge), id);
 	}
 
 	@Override
 	public SlotWidget getInputWidget(int slot, int x, int y) {
 		if (slot == 0) {
-			return new SlotWidget(EmiStack.of(Items.GUNPOWDER), x, y);
+			return new SlotWidget(EmiStack.of(Items.gunpowder), x, y);
 		} else {
 			final int s = slot - 1;
 			return new GeneratedSlotWidget(r -> {
@@ -89,7 +89,7 @@ public class EmiFireworkStarRecipe extends EmiPatternCraftingRecipe {
 	}
 
 	private EmiStack getFireworkStar(Random random) {
-		ItemStack stack = new ItemStack(Items.FIREWORK_CHARGE);
+		ItemStack stack = new ItemStack(Items.firework_charge);
 		NBTTagCompound tag = new NBTTagCompound();
 		NBTTagCompound explosion = new NBTTagCompound();
 		boolean hasShape = false;
@@ -103,25 +103,25 @@ public class EmiFireworkStarRecipe extends EmiPatternCraftingRecipe {
 		List<Integer> colors = Lists.newArrayList();
 
 		for (ItemStack item : items) {
-			if (Items.GLOWSTONE_DUST.equals(item.getItem())) {
+			if (Items.glowstone_dust.equals(item.getItem())) {
 				explosion.setByte("Flicker", largeBall);
-			} else if (Items.DIAMOND.equals(item.getItem())) {
+			} else if (Items.diamond.equals(item.getItem())) {
 				explosion.setByte("Trail", largeBall);
-			} else if (Items.FIREWORK_CHARGE.equals(item.getItem())) {
+			} else if (Items.firework_charge.equals(item.getItem())) {
 				explosion.setByte("Type", largeBall);
 				hasShape = true;
-			} else if (Items.GOLD_NUGGET.equals(item.getItem())) {
+			} else if (Items.gold_nugget.equals(item.getItem())) {
 				explosion.setByte("Type", star);
 				hasShape = true;
-			} else if (Items.FEATHER.equals(item.getItem())) {
+			} else if (Items.feather.equals(item.getItem())) {
 				explosion.setByte("Type", burst);
 				hasShape = true;
-			} else if (Items.SKULL.equals(item.getItem())) {
+			} else if (Items.skull.equals(item.getItem())) {
 				explosion.setByte("Type", creeper);
 				hasShape = true;
 			} else {
-				colors.add(ItemDye.DYE_COLORS[EnumDyeColor.values()[1].ordinal()]);
-				colors.add(ItemDye.DYE_COLORS[EnumDyeColor.values()[item.getItemDamage()].ordinal()]);
+				colors.add(DyeColor.values()[1].getFireworkColor());
+				colors.add(DyeColor.values()[item.getItemDamage()].getFireworkColor());
 			}
 		}
 		if (!hasShape) {

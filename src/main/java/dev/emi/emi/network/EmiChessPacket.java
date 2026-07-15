@@ -1,5 +1,6 @@
 package dev.emi.emi.network;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import dev.emi.emi.chess.EmiChess;
@@ -23,7 +24,10 @@ public abstract class EmiChessPacket implements EmiPacket {
 	}
 
 	public void read(PacketBuffer buf) {
-		this.uuid = buf.readUniqueId();
+		try {
+			this.uuid = UUID.fromString(buf.readStringFromBuffer(Short.MAX_VALUE));
+		} catch (IOException ignore) {
+		}
 		this.type = buf.readByte();
 		this.start = buf.readByte();
 		this.end = buf.readByte();
@@ -31,7 +35,10 @@ public abstract class EmiChessPacket implements EmiPacket {
 
 	@Override
 	public void write(PacketBuffer buf) {
-		buf.writeUniqueId(uuid);
+		try {
+			buf.writeStringToBuffer(uuid.toString());
+		} catch (IOException ignore) {
+		}
 		buf.writeByte(type);
 		buf.writeByte(start);
 		buf.writeByte(end);
@@ -68,7 +75,7 @@ public abstract class EmiChessPacket implements EmiPacket {
 
 		@Override
 		public void apply(EntityPlayer player) {
-			EntityPlayer opponent = player.getEntityWorld().getPlayerEntityByUUID(uuid);
+			EntityPlayer opponent = player.getEntityWorld().func_152378_a(uuid);
 			if (opponent instanceof EntityPlayerMP spe) {
 				EmiNetwork.sendToClient(spe, new S2C(player.getUniqueID(), type, start, end));
 			}

@@ -1,6 +1,6 @@
 package shim.net.minecraft.client.item;
 
-import net.minecraft.client.util.ITooltipFlag;
+import shim.net.minecraft.client.util.ITooltipFlag;
 
 public class TooltipContext {
 

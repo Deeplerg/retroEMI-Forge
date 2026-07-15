@@ -49,8 +49,8 @@ public class EmiBookCloningRecipe extends EmiPatternCraftingRecipe {
 		Template.of(NOUN, "1st Edition"),
 		Template.of(IMPERATIVE, MOD)
 	);
-	private static final EmiStack BOOK_AND_QUILL = EmiStack.of(Items.WRITABLE_BOOK);
-	private static final EmiStack WRITTEN_BOOK = EmiStack.of(Items.WRITTEN_BOOK);
+	private static final EmiStack BOOK_AND_QUILL = EmiStack.of(Items.writable_book);
+	private static final EmiStack WRITTEN_BOOK = EmiStack.of(Items.written_book);
 
 	public EmiBookCloningRecipe(ResourceLocation id) {
 		super(shim.java.List.of(WRITTEN_BOOK, BOOK_AND_QUILL), WRITTEN_BOOK.copy().setAmount(2), id);
@@ -72,7 +72,7 @@ public class EmiBookCloningRecipe extends EmiPatternCraftingRecipe {
 	}
 
 	private EmiStack getWrittenBook(Random random, boolean copy) {
-		ItemStack stack = new ItemStack(Items.WRITTEN_BOOK);
+		ItemStack stack = new ItemStack(Items.written_book);
 		NBTTagCompound tag = new NBTTagCompound();
 		String title = TEMPLATES.get(random.nextInt(TEMPLATES.size())).resolve(random);
 		if (title.length() > 0) {

@@ -6,6 +6,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(GuiTextField.class)
 public interface GuiTextFieldAccessor {
-    @Accessor("isEnabled")
-    boolean isEnabled();
+	@Accessor("isEnabled")
+	boolean isEnabled();
 }

@@ -1,6 +1,7 @@
 package dev.emi.emi.data;
 
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -28,11 +29,11 @@ public class EmiTagExclusionsLoader extends SinglePreparationResourceReloader<Ta
 	public TagExclusions prepare(IResourceManager manager, Profiler profiler) {
 		TagExclusions exclusions = new TagExclusions();
 		for (ResourceLocation id : EmiPort.findResources(manager, "tag/exclusions", i -> i.endsWith(".json"))) {
-			if (!id.getNamespace().equals("emi")) {
+			if (!id.getResourceDomain().equals("emi")) {
 				continue;
 			}
 			try {
-				for (IResource resource : manager.getAllResources(id)) {
+				for (IResource resource : (List<IResource>) manager.getAllResources(id)) {
 					InputStreamReader reader = new InputStreamReader(EmiPort.getInputStream(resource));
 					JsonObject json = JsonHelper.deserialize(GSON, reader, JsonObject.class);
 					try {
@@ -47,13 +48,13 @@ public class EmiTagExclusionsLoader extends SinglePreparationResourceReloader<Ta
 									ResourceLocation eid = EmiPort.id(el.getAsString());
 									if (key.equals("exclusions")) {
 										exclusions.add(eid);
-										if (eid.getNamespace().equals("c")) {
-											exclusions.add(EmiPort.id("forge", eid.getPath()));
+										if (eid.getResourceDomain().equals("c")) {
+											exclusions.add(EmiPort.id("forge", eid.getResourcePath()));
 										}
 									} else {
 										exclusions.add(type, eid);
-										if (eid.getNamespace().equals("c")) {
-											exclusions.add(type, EmiPort.id("forge", eid.getPath()));
+										if (eid.getResourceDomain().equals("c")) {
+											exclusions.add(type, EmiPort.id("forge", eid.getResourcePath()));
 										}
 									}
 								}

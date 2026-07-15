@@ -15,7 +15,7 @@ public class CustomAnimatedTextureWidget extends TextureWidget {
 
 
 	public CustomAnimatedTextureWidget(ResourceLocation texture, int x, int y, int width, int height, int u, int v, int regionWidth, int regionHeight,
-                                       int textureWidth, int textureHeight, int time, int frameCount) {
+		int textureWidth, int textureHeight, int time, int frameCount) {
 		super(texture, x, y, width, height, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
 		this.time = time;
 		this.frameCount = frameCount;
@@ -29,7 +29,7 @@ public class CustomAnimatedTextureWidget extends TextureWidget {
 	public void render(DrawContext draw, int mouseX, int mouseY, float delta) {
 		EmiDrawContext context = EmiDrawContext.wrap(draw);
 
-		int totalTime = (int) Minecraft.getMinecraft().world.getTotalWorldTime() % time;
+		int totalTime = (int) Minecraft.getMinecraft().theWorld.getTotalWorldTime() % time;
 		if (totalTime % time == 0 & totalTime != oldCount || time == 1) {
 			internalCount++;
 			if (internalCount >= frameCount) {

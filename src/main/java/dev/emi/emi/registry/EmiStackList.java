@@ -1,5 +1,6 @@
 package dev.emi.emi.registry;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import dev.emi.emi.config.IndexSource;
 import dev.emi.emi.data.EmiAlias;
 import dev.emi.emi.data.EmiData;
 import dev.emi.emi.data.IndexStackData;
+import dev.emi.emi.mixin.accessor.ItemBlockAccessor;
 import dev.emi.emi.runtime.EmiHidden;
 import dev.emi.emi.runtime.EmiLog;
 import it.unimi.dsi.fastutil.Hash;
@@ -33,7 +35,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import shim.net.minecraft.registry.tag.ItemKey;
 import shim.net.minecraft.registry.tag.TagKey;
 import net.minecraftforge.fluids.Fluid;
@@ -66,7 +67,7 @@ public class EmiStackList {
 			try {
 				itemName = item.toString();
 				EmiStack stack = EmiStack.of(item);
-				namespaceGroups.computeIfAbsent(stack.getId().getNamespace(), (k) -> new IndexGroup()).stacks.add(stack);
+				namespaceGroups.computeIfAbsent(stack.getId().getResourceDomain(), (k) -> new IndexGroup()).stacks.add(stack);
 			} catch (Exception e) {
 				EmiLog.error("Item " + itemName + " threw while EMI was attempting to construct the index, items may be missing.", e);
 			}
@@ -75,11 +76,11 @@ public class EmiStackList {
 			String itemName = "null";
 			try {
 				itemName = item.toString();
-                NonNullList<ItemStack> itemStacks = NonNullList.create();
-				item.getSubItems(CreativeTabs.SEARCH, itemStacks);
+				List<ItemStack> itemStacks = new ArrayList<>();
+				item.getSubItems(item, CreativeTabs.tabAllSearch, itemStacks);
 				List<EmiStack> stacks = itemStacks.stream().filter(s -> s != null && s.getItem() != null).map(EmiStack::of).collect(Collectors.toList());
 				if (!stacks.isEmpty()) {
-					creativeGroups.computeIfAbsent(stacks.get(0).getId().getNamespace(), (k) -> new IndexGroup()).stacks.addAll(stacks);
+					creativeGroups.computeIfAbsent(stacks.get(0).getId().getResourceDomain(), (k) -> new IndexGroup()).stacks.addAll(stacks);
 				}
 			} catch (Exception e) {
 				EmiLog.error("Item " + itemName + " threw while EMI was attempting to construct the index, items may be missing.", e);
@@ -131,7 +132,7 @@ public class EmiStackList {
 	@SuppressWarnings({"deprecation", "unchecked"})
 	private static <T> boolean isHiddenFromRecipeViewers(T key) {
 		if (key instanceof Item i) {
-			if (i instanceof ItemBlock bi && BLOCK_HIDDEN.contains(bi.getBlock())) {
+			if (i instanceof ItemBlock bi && BLOCK_HIDDEN.contains(((ItemBlockAccessor) bi).getBlock())) {
 				return true;
 			} else if (ITEM_HIDDEN.contains(ItemKey.of(new ItemStack(i)))) {
 				return true;
@@ -277,7 +278,7 @@ public class EmiStackList {
 		@Override
 		public int hashCode(EmiStack stack) {
 			if (stack != null) {
-                NBTTagCompound changes = stack.getNbt();
+				NBTTagCompound changes = stack.getNbt();
 				int i = 31 + stack.getKey().hashCode();
 				return 31 * i + (changes == null ? 0 : changes.hashCode());
 			}

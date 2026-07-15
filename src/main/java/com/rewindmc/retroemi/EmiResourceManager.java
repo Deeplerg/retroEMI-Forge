@@ -14,7 +14,6 @@ import java.util.zip.ZipFile;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.mixin.accessor.AbstractResourcePackAccessor;
 import dev.emi.emi.mixin.accessor.FallbackResourceManagerAccessor;
-import dev.emi.emi.mixin.accessor.LegacyV2AdapterAccessor;
 import dev.emi.emi.mixin.accessor.SimpleReloadableResourceManagerAccessor;
 import dev.emi.emi.platform.forge.EmiClientForge;
 import net.minecraft.client.Minecraft;
@@ -22,22 +21,21 @@ import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.FileResourcePack;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.resource.IResourceType;
-import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
-import net.minecraftforge.fml.client.FMLFolderResourcePack;
+import cpw.mods.fml.client.FMLFolderResourcePack;
 import org.jetbrains.annotations.NotNull;
 
-public class EmiResourceManager implements ISelectiveResourceReloadListener {
+public class EmiResourceManager implements IResourceManagerReloadListener {
 	public static EmiResourceManager instance = new EmiResourceManager();
 
 	@Override
-	public void onResourceManagerReload(@NotNull IResourceManager resourceManager, @NotNull Predicate<IResourceType> predicate) {
+	public void onResourceManagerReload(@NotNull IResourceManager resourceManager) {
 		EmiClientForge.registerResourceReloaders();
 		EmiClientForge.registerAdditionalModels();
-		if (Minecraft.getMinecraft().world != null) {
+		if (Minecraft.getMinecraft().theWorld != null) {
 			EmiClientForge.tagsReloaded();
 			EmiClientForge.recipesReloaded();
 		}
@@ -55,9 +53,9 @@ public class EmiResourceManager implements ISelectiveResourceReloadListener {
 			}
 			String assetPrefix = String.format("assets/%s/", namespace);
 			for (IResourcePack pack : ((FallbackResourceManagerAccessor) frm).getResourcePacks()) {
-				if (pack instanceof LegacyV2AdapterAccessor adapter) {
-					pack = adapter.getUnadaptedPack();
-				}
+//				if (pack instanceof LegacyV2AdapterAccessor adapter) {
+//					pack = adapter.getUnadaptedPack();
+//				}
 				if (pack instanceof FileResourcePack frp) {
 					try (ZipFile zip = new ZipFile(((AbstractResourcePackAccessor) frp).getResourcePackFile())) {
 						Stream<String> relativePaths = zip.stream()

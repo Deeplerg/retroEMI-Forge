@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -35,7 +36,7 @@ import shim.net.minecraft.text.Text;
 public abstract class InventoryEffectRendererMixin extends GuiContainer {
 	private InventoryEffectRendererMixin() { super(null); }
 
-	@WrapOperation(method = "updateActivePotionEffects",
+	@WrapOperation(method = "initGui",
 		at = @At(value = "FIELD",
 			target = "Lnet/minecraft/client/renderer/InventoryEffectRenderer;guiLeft:I",
 			opcode = Opcodes.PUTFIELD
@@ -46,7 +47,7 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 	}
 
 	@Inject(at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/inventory/GuiContainer;drawScreen(IIF)V"),
+			target = "Lnet/minecraft/client/gui/inventory/GuiContainer;drawScreen(IIF)V", shift = At.Shift.AFTER),
 		method = "drawScreen")
 	private void drawScreen(int mouseX, int mouseY, float par3, CallbackInfo ci) {
 		if (EmiConfig.effectLocation == EffectLocation.TOP) {
@@ -54,19 +55,26 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 		}
 	}
 
-	@ModifyVariable(at = @At(value = "INVOKE", target = "java/util/Collection.size()I", ordinal = 0),
-		method = "drawActivePotionEffects", ordinal = 0)
-	private Collection<PotionEffect> drawStatusEffects(Collection<PotionEffect> original) {
+//	@ModifyVariable(at = @At(value = "INVOKE", target = "java/util/Collection.size()I", ordinal = 0),
+//		method = "func_147044_g", ordinal = 0)
+//	private Collection<PotionEffect> drawStatusEffects(Collection<PotionEffect> original) {
+//		if (EmiConfig.effectLocation == EffectLocation.TOP || EmiConfig.effectLocation == EffectLocation.HIDDEN) {
+//			return shim.java.List.of();
+//		}
+//		return original;
+//	}
+
+	@Inject(method = "initGui", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/inventory/GuiContainer;initGui()V", shift = At.Shift.AFTER), cancellable = true)
+	private void initGui(CallbackInfo ci) {
 		if (EmiConfig.effectLocation == EffectLocation.TOP || EmiConfig.effectLocation == EffectLocation.HIDDEN) {
-			return shim.java.List.of();
+			ci.cancel();
 		}
-		return original;
 	}
 
 	private void emi$drawCenteredEffects(DrawContext raw, int mouseX, int mouseY) {
 		EmiDrawContext context = EmiDrawContext.wrap(raw);
 		context.resetColor();
-		Collection<PotionEffect> effects = Ordering.natural().sortedCopy(this.mc.player.getActivePotionEffects());
+		Collection<PotionEffect> effects = this.mc.thePlayer.getActivePotionEffects();
 		int size = effects.size();
 		if (size == 0) {
 			return;
@@ -100,7 +108,7 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 				REMIMixinHooks.drawStatusEffectBackgrounds(context.raw(), x, y, wide);
 				REMIMixinHooks.drawStatusEffectSprites(context.raw(), x, y, inst);
 				if (wide) {
-					REMIMixinHooks.drawStatusEffectDescriptions(x - width, y, inst);
+					REMIMixinHooks.drawStatusEffectDescriptions(x, y, inst);
 				}
 				if (mouseX >= x && mouseX < x + ew && mouseY >= y && mouseY < y + 32) {
 					hovered = inst;
@@ -112,19 +120,19 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 			this.ySize = restoreY;
 		}
 		if (hovered != null && size > 1) {
-			List<Text> list = shim.java.List.of(Text.translatable(hovered.getEffectName()).append(Text.literal(REMIMixinHooks.getPotionAmplifier(hovered))), Text.literal(Potion.getPotionDurationString(hovered, 1.0F)));
+			List<Text> list = shim.java.List.of(Text.translatable(hovered.getEffectName()).append(Text.literal(REMIMixinHooks.getPotionAmplifier(hovered))), Text.literal(Potion.getDurationString(hovered)));
 			context.raw().drawTooltip(mc.fontRenderer, list, mouseX, Math.max(mouseY, 16));
 		}
 	}
 
 	@WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/potion/Potion;shouldRenderInvText(Lnet/minecraft/potion/PotionEffect;)Z", remap = false),
-		method = "drawActivePotionEffects")
+		method = "func_147044_g")
 	private boolean squishEffects(Potion instance, PotionEffect effect, Operation<Boolean> original) {
 		return !EmiConfig.effectLocation.compressed;
 	}
 
 	@ModifyVariable(at = @At(value = "STORE", ordinal = 0),
-		method = "drawActivePotionEffects", index = 1)
+		method = "func_147044_g", index = 1)
 	private int changeEffectSpace(int original) {
 		return switch (EmiConfig.effectLocation) {
 			case RIGHT, RIGHT_COMPRESSED, HIDDEN -> this.guiLeft + this.xSize + 2;
@@ -134,17 +142,17 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 		};
 	}
 
-	@WrapOperation(method = "drawActivePotionEffects",
+	@WrapOperation(method = "func_147044_g",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/InventoryEffectRenderer;drawTexturedModalRect(IIIIII)V", ordinal = 0))
 	private void drawBackground(InventoryEffectRenderer instance, int x, int y, int u, int v, int width, int height, Operation<Void> original) {
 		REMIMixinHooks.drawStatusEffectBackgrounds(DrawContext.INSTANCE, x, y, !EmiConfig.effectLocation.compressed);
 	}
 
-	@Inject(method = "drawActivePotionEffects", at = @At("TAIL"))
+	@Inject(method = "func_147044_g", at = @At("TAIL"))
 	private void drawTooltip(CallbackInfo ci, @Local(ordinal = 0) int effectX, @Local Collection<PotionEffect> effects) {
 		EmiDrawContext context = EmiDrawContext.instance();
 		if (EmiConfig.effectLocation.compressed && !effects.isEmpty()) {
-			ScaledResolution sr = new ScaledResolution(this.mc);
+			ScaledResolution sr = new ScaledResolution(this.mc, this.mc.displayWidth, this.mc.displayHeight);
 			int width = sr.getScaledWidth();
 			int height = sr.getScaledHeight();
 			int mouseX = Mouse.getX() * width / this.mc.displayWidth;
@@ -152,18 +160,18 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 			PotionEffect hovered = null;
 			int spacing = effects.size() > 5 ? 132 / (effects.size() - 1) : 33;
 			int currentY = this.guiTop;
-			for (PotionEffect effect : Ordering.natural().sortedCopy(effects)) {
-				Potion potion = effect.getPotion();
-				if (potion.shouldRender(effect)) {
+			for (PotionEffect potion : effects) {
+//				Potion potion = effect.getPotion();
+//				if (potion.shouldRender(effect)) {
 					int ew = 32;
 					if (mouseX >= effectX && mouseX < effectX + ew && mouseY >= currentY && mouseY < currentY + ew) {
-						hovered = effect;
+						hovered = potion;
 					}
 					currentY += spacing;
-				}
+//				}
 			}
 			if (hovered != null && effects.size() > 1) {
-				List<Text> list = shim.java.List.of(Text.translatable(hovered.getEffectName()).append(Text.literal(REMIMixinHooks.getPotionAmplifier(hovered))), Text.literal(Potion.getPotionDurationString(hovered, 1.0F)));
+				List<Text> list = shim.java.List.of(Text.translatable(hovered.getEffectName()).append(Text.literal(REMIMixinHooks.getPotionAmplifier(hovered))), Text.literal(Potion.getDurationString(hovered)));
 				context.raw().drawTooltip(mc.fontRenderer, list, mouseX, Math.max(mouseY, 16));
 			}
 		}

@@ -2,12 +2,11 @@ package dev.emi.emi.network;
 
 import dev.emi.emi.runtime.EmiLog;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.SPacketSetSlot;
 import com.rewindmc.retroemi.RetroEMI;
 import net.minecraft.util.ResourceLocation;
+import shim.net.minecraft.item.ItemStacks;
 
 import java.io.IOException;
 
@@ -25,9 +24,9 @@ public class CreateItemC2SPacket implements EmiPacket {
 
 	public void read(PacketBuffer buf) {
 		this.mode = buf.readByte();
-		ItemStack stack = ItemStack.EMPTY;
+		ItemStack stack = ItemStacks.EMPTY;
 		try {
-			stack = buf.readItemStack();
+			stack = buf.readItemStackFromBuffer();
 		} catch (IOException ignored) {
 		}
 		this.stack = stack;
@@ -36,19 +35,22 @@ public class CreateItemC2SPacket implements EmiPacket {
 	@Override
 	public void write(PacketBuffer buf) {
 		buf.writeByte(mode);
-		buf.writeItemStack(stack);
+		try {
+			buf.writeItemStackToBuffer(stack);
+		} catch (IOException ignored) {
+		}
 	}
 
 	@Override
 	public void apply(EntityPlayer player) {
-		if ((player.canUseCommand(2, "give") || player.capabilities.isCreativeMode) && player.openContainer != null) {
-			if (stack.isEmpty()) {
-				if (mode == 1 && !player.inventory.getItemStack().isEmpty()) {
-					EmiLog.info(player.getName() + " deleted " + player.inventory.getItemStack());
+		if ((player.canCommandSenderUseCommand(2, "give") || player.capabilities.isCreativeMode) && player.openContainer != null) {
+			if (ItemStacks.isEmpty(stack)) {
+				if (mode == 1 && !ItemStacks.isEmpty(player.inventory.getItemStack())) {
+					EmiLog.info(player.getCommandSenderName() + " deleted " + player.inventory.getItemStack());
 					player.inventory.setItemStack(stack);
 				}
 			} else {
-				EmiLog.info(player.getName() + " cheated in " + stack);
+				EmiLog.info(player.getCommandSenderName() + " cheated in " + stack);
 				if (mode == 0) {
 					RetroEMI.offerOrDrop(player, stack);
 				} else if (mode == 1) {

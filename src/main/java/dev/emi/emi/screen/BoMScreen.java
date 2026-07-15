@@ -49,8 +49,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.util.MathHelper;
 import shim.net.minecraft.client.gui.DrawContext;
 import shim.net.minecraft.client.gui.tooltip.TooltipComponent;
 import shim.net.minecraft.client.util.math.MatrixStack;
@@ -104,13 +103,13 @@ public class BoMScreen extends REMIScreen {
 			}
 			if (!volume.nodes.isEmpty()) {
 				Node node = volume.nodes.get(0);
-				int width = fontRenderer.getStringWidth("x" + BoM.tree.batches);
+				int width = fontRendererObj.getStringWidth("x" + BoM.tree.batches);
 				batches = new Bounds(node.x + node.width / 2 + 6, node.y - 10, width + 12, 22);
 			}
 
 			nodeWidth = volume.getMaxRight() - volume.getMinLeft();
 			nodeHeight = getNodeHeight(BoM.tree.goal);
-			playerInv = EmiPlayerInventory.of(client.player);
+			playerInv = EmiPlayerInventory.of(client.thePlayer);
 			BoM.tree.calculateProgress(playerInv);
 			Map<EmiIngredient, FlatMaterialCost> progressCosts = BoM.tree.cost.costs.values().stream()
 				.collect(Collectors.toMap(c -> c.ingredient, c -> c));
@@ -156,7 +155,7 @@ public class BoMScreen extends REMIScreen {
 				cost.x -= costOffset;
 			}
 
-			int totalCostWidth = fontRenderer.getStringWidth(EmiPort.translatable("emi.total_cost").asString());
+			int totalCostWidth = fontRendererObj.getStringWidth(EmiPort.translatable("emi.total_cost").asString());
 			mode = new Bounds(totalCostWidth / 2 + 4, cy - 20, 16, 16);
 
 			List<Cost> remainders = Lists.newArrayList();
@@ -213,8 +212,8 @@ public class BoMScreen extends REMIScreen {
 		int xBound = scaledWidth / 2 + contentWidth - 100;
 		int topBound = scaledHeight * 1 / -2 + 20;
 		int bottomBound = contentHeight + scaledHeight / 2 - 20;
-		offX = MathHelper.clamp(offX, -xBound, xBound);
-		offY = MathHelper.clamp(offY, -bottomBound, -topBound);
+		offX = MathHelper.clamp_double(offX, -xBound, xBound);
+		offY = MathHelper.clamp_double(offY, -bottomBound, -topBound);
 
 		int mx = (int) ((mouseX - width / 2) / scale - offX);
 		int my = (int) ((mouseY - height / 2) / scale - offY);
@@ -380,7 +379,7 @@ public class BoMScreen extends REMIScreen {
 	}
 
 	public float getScale() {
-		zoom = MathHelper.clamp(zoom, -6, 4);
+		zoom = MathHelper.clamp_int(zoom, -6, 4);
 		int scale = (int) EmiPort.getGuiScale(client);
 		int desired = scale + zoom;
 		if (desired < 1) {
@@ -505,13 +504,13 @@ public class BoMScreen extends REMIScreen {
 				}
 			}
 		} else if (mode.contains(mx, my)) {
-            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(EmiPort.id("gui.button.press"), 1.0f));
 			BoM.craftingMode = !BoM.craftingMode;
 			recalculateTree();
 		} else if (batches.contains(mx, my) && BoM.tree != null) {
 			long ideal = BoM.tree.cost.getIdealBatch(BoM.tree.goal, 1, 1);
 			if (ideal != BoM.tree.batches) {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+				Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(EmiPort.id("gui.button.press"), 1.0f));
 				BoM.tree.batches = ideal;
 				recalculateTree();
 			}
@@ -750,7 +749,7 @@ public class BoMScreen extends REMIScreen {
 				drawLine(context, lx, ly, hx, ly, color);
 				drawLine(context, lx, hy, hx, hy, color);
 				EmiRecipeCategory cat = node.recipe.getCategory();
-				if (StackBatcher.isEnabled() && EmiRecipeCategoryProperties.getSimplifiedIcon(cat) instanceof Batchable b) {
+				if (/*StackBatcher.isEnabled() && */EmiRecipeCategoryProperties.getSimplifiedIcon(cat) instanceof Batchable b) {
 					batcher.render(b, context.raw(), x - 18 + midOffset, y - 8, delta);
 				} else {
 					cat.renderSimplified(context.raw(), x - 18 + midOffset, y - 8, delta);

@@ -59,8 +59,8 @@ public class EmiPlayerInventory {
 		}
 
 		InventoryPlayer pInv = entity.inventory;
-		for (int i = 0; i < pInv.mainInventory.size(); i++) {
-			addStack(pInv.mainInventory.get(i));
+		for (int i = 0; i < pInv.mainInventory.length; i++) {
+			addStack(pInv.mainInventory[i]);
 		}
 		if (pInv.getItemStack() != null) {
 			addStack(pInv.getItemStack());
@@ -71,7 +71,7 @@ public class EmiPlayerInventory {
 		for (EmiStack stack : stacks) {
 			addStack(stack);
 		}
-		var ci = Minecraft.getMinecraft().player.inventory.getItemStack();
+		var ci = Minecraft.getMinecraft().thePlayer.inventory.getItemStack();
 		if (ci != null) {
 			addStack(ci);
 		}
@@ -105,11 +105,11 @@ public class EmiPlayerInventory {
 		if (!handlers.isEmpty()) {
 			EmiCraftContext context = new EmiCraftContext(screen, this, EmiCraftContext.Type.CRAFTABLE);
 			return r -> {
-                for (EmiRecipeHandler handler : handlers) {
-                    if (handler.supportsRecipe(r)) {
-                        return handler.canCraft(r, context);
-                    }
-                }
+				for (EmiRecipeHandler handler : handlers) {
+					if (handler.supportsRecipe(r)) {
+						return handler.canCraft(r, context);
+					}
+				}
 				return false;
 			};
 		}

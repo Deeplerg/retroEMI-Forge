@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import dev.emi.emi.VanillaPlugin;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
@@ -52,12 +52,12 @@ public class EmiApi {
 	}
 
 	public static boolean isCheatMode() {
-        return switch (EmiConfig.cheatMode) {
-            case TRUE -> true;
-            case CREATIVE -> client.player == null || client.player.capabilities.isCreativeMode;
-            case FALSE -> false;
-        };
-    }
+		return switch (EmiConfig.cheatMode) {
+			case TRUE -> true;
+			case CREATIVE -> client.thePlayer == null || client.thePlayer.capabilities.isCreativeMode;
+			case FALSE -> false;
+		};
+	}
 
 	/**
 	 * @return Current search text
@@ -120,23 +120,23 @@ public class EmiApi {
 		return null;
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static void displayAllRecipes() {
 		EmiRecipeManager manager = EmiApi.getRecipeManager();
 		setPages(manager.getCategories().stream().collect(Collectors.toMap(c -> c, c -> manager.getRecipes(c))), EmiStack.EMPTY);
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static void displayRecipeCategory(EmiRecipeCategory category) {
 		setPages(Collections.singletonMap(category, getRecipeManager().getRecipes(category)), EmiStack.EMPTY);
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static void displayRecipe(EmiRecipe recipe) {
 		setPages(Collections.singletonMap(recipe.getCategory(), Collections.singletonList(recipe)), EmiStack.EMPTY);
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static void displayRecipes(EmiIngredient stack) {
 		if (stack instanceof EmiFavorite fav) {
 			stack = fav.getStack();
@@ -157,7 +157,7 @@ public class EmiApi {
 		}
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static void displayUses(EmiIngredient stack) {
 		if (!stack.isEmpty()) {
 			EmiStack zero = stack.getEmiStacks().get(0);
@@ -169,11 +169,11 @@ public class EmiApi {
 		}
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static void viewRecipeTree() {
 		if (client.currentScreen == null) {
 			//noinspection RedundantCast
-			client.displayGuiScreen(new GuiInventory((EntityPlayer) (Object) client.player));
+			client.displayGuiScreen(new GuiInventory((EntityPlayer) (Object) client.thePlayer));
 		}
 		GuiScreen s = client.currentScreen;
 		if (s instanceof GuiContainer hs) {
@@ -185,14 +185,14 @@ public class EmiApi {
 		}
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static void focusRecipe(EmiRecipe recipe) {
 		if (client.currentScreen instanceof RecipeScreen rs) {
 			rs.focusRecipe(recipe);
 		}
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	private static void push() {
 		if (client.currentScreen instanceof RecipeScreen rs) {
 			EmiHistory.push(rs);
@@ -252,7 +252,7 @@ public class EmiApi {
 		return true;
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	private static void setPages(Map<EmiRecipeCategory, List<EmiRecipe>> recipes, EmiIngredient stack) {
 		recipes = recipes.entrySet().stream().filter(e -> !e.getValue().isEmpty())
 			.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
@@ -260,7 +260,7 @@ public class EmiApi {
 			EmiSidebars.lookup(stack);
 			if (getHandledScreen() == null) {
 				//noinspection RedundantCast
-				client.displayGuiScreen(new GuiInventory((EntityPlayer) (Object) client.player));
+				client.displayGuiScreen(new GuiInventory((EntityPlayer) (Object) client.thePlayer));
 			}
 			GuiScreen s = client.currentScreen;
 			if (s instanceof GuiContainer hs) {

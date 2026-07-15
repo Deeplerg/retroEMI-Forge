@@ -1,5 +1,6 @@
 package dev.emi.emi.network;
 
+import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.EmiApi;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.stack.EmiStack;
@@ -24,7 +25,10 @@ public class CommandS2CPacket implements EmiPacket {
 	public void read(PacketBuffer buf) {
 		type = buf.readByte();
 		if (type == EmiCommands.VIEW_RECIPE || type == EmiCommands.TREE_GOAL || type == EmiCommands.TREE_RESOLUTION) {
-			id = buf.readResourceLocation();
+			try {
+				id = EmiPort.id(buf.readStringFromBuffer(Short.MAX_VALUE));
+			} catch (Exception ignore) {
+			}
 		} else {
 			id = null;
 		}
@@ -34,7 +38,10 @@ public class CommandS2CPacket implements EmiPacket {
 	public void write(PacketBuffer buf) {
 		buf.writeByte(type);
 		if (type == EmiCommands.VIEW_RECIPE || type == EmiCommands.TREE_GOAL || type == EmiCommands.TREE_RESOLUTION) {
-			buf.writeResourceLocation(id);
+			try {
+				buf.writeStringToBuffer(id.toString());
+			} catch (Exception ignore) {
+			}
 		}
 	}
 

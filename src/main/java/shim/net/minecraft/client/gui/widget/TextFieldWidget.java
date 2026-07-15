@@ -8,13 +8,13 @@ import java.util.function.Predicate;
 //import com.cleanroommc.client.IMEHandler;
 import dev.emi.emi.input.EmiInput;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 import shim.net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.MathHelper;
 import shim.net.minecraft.client.gui.Drawable;
 import shim.net.minecraft.text.OrderedText;
 import shim.net.minecraft.text.Text;
@@ -22,6 +22,12 @@ import shim.net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import shim.org.lwjgl.glfw.GLFW;
+
+import static org.lwjgl.opengl.GL11.GL_COLOR_LOGIC_OP;
+import static org.lwjgl.opengl.GL11.GL_OR_REVERSE;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glLogicOp;
 
 @SideOnly(Side.CLIENT)
 public class TextFieldWidget extends ClickableWidget implements Drawable {
@@ -242,7 +248,7 @@ public class TextFieldWidget extends ClickableWidget implements Drawable {
 	}
 
 	public void setSelectionStart(int cursor) {
-		this.selectionStart = MathHelper.clamp(cursor, 0, this.text.length());
+		this.selectionStart = MathHelper.clamp_int(cursor, 0, this.text.length());
 	}
 
 	public void setCursorToStart() {
@@ -368,7 +374,7 @@ public class TextFieldWidget extends ClickableWidget implements Drawable {
 			this.setFocused(bl);
 		}
 		if (this.isFocused() && bl && button == 0) {
-			int i = MathHelper.floor(mouseX) - this.getX();
+			int i = MathHelper.floor_double(mouseX) - this.getX();
 			if (this.drawsBackground) {
 				i -= 4;
 			}
@@ -455,10 +461,10 @@ public class TextFieldWidget extends ClickableWidget implements Drawable {
 		if (x1 > this.getX() + this.width) {
 			x1 = this.getX() + this.width;
 		}
-        GlStateManager.enableColorLogic();
-        GlStateManager.colorLogicOp(GlStateManager.LogicOp.OR_REVERSE.opcode);
+		GL11.glEnable(GL11.GL_COLOR_LOGIC_OP);
+		GL11.glLogicOp(GL11.GL_OR_REVERSE);
 		raw.fill(x1, y1, x2, y2, -16776961);
-		GlStateManager.disableColorLogic();
+		GL11.glDisable(GL11.GL_COLOR_LOGIC_OP);
 	}
 
 	public void setMaxLength(int maxLength) {
@@ -508,7 +514,7 @@ public class TextFieldWidget extends ClickableWidget implements Drawable {
 			return;
 		}
 		super.setFocused(focused);
-//        IMEHandler.setIME(focused);
+//		IMEHandler.setIME(focused);
 		if (focused) {
 			this.focusedTicks = 0;
 		}
@@ -528,7 +534,7 @@ public class TextFieldWidget extends ClickableWidget implements Drawable {
 
 	public void setSelectionEnd(int index) {
 		int i = this.text.length();
-		this.selectionEnd = MathHelper.clamp(index, 0, i);
+		this.selectionEnd = MathHelper.clamp_int(index, 0, i);
 		if (this.textRenderer != null) {
 			if (this.firstCharacterIndex > i) {
 				this.firstCharacterIndex = i;
@@ -544,7 +550,7 @@ public class TextFieldWidget extends ClickableWidget implements Drawable {
 			} else if (this.selectionEnd <= this.firstCharacterIndex) {
 				this.firstCharacterIndex -= this.firstCharacterIndex - this.selectionEnd;
 			}
-			this.firstCharacterIndex = MathHelper.clamp(this.firstCharacterIndex, 0, i);
+			this.firstCharacterIndex = MathHelper.clamp_int(this.firstCharacterIndex, 0, i);
 		}
 	}
 

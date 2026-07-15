@@ -3,40 +3,30 @@ package dev.emi.emi;
 import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.rewindmc.retroemi.EmiResourceManager;
+import cpw.mods.fml.common.registry.FMLControlledNamespacedRegistry;
+import cpw.mods.fml.common.registry.GameData;
 import dev.emi.emi.api.stack.Comparison;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.PotionType;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.lwjgl.opengl.GL11;
 import shim.com.mojang.blaze3d.systems.RenderSystem;
 import shim.net.minecraft.client.gui.widget.ButtonWidget;
 import shim.net.minecraft.client.gui.widget.TextFieldWidget;
@@ -45,6 +35,7 @@ import shim.net.minecraft.text.OrderedText;
 import shim.net.minecraft.text.Style;
 import shim.net.minecraft.text.Text;
 import shim.net.minecraft.util.Formatting;
+import shim.net.minecraft.util.SyntheticIdentifier;
 
 /**
  * Multiversion quarantine, to avoid excessive git pain
@@ -98,15 +89,15 @@ public final class EmiPort {
 			return null;
 		}
 	}
-	public static NBTTagList addRandomBanner(NBTTagList patterns, Random random) {
-		BannerPattern pattern = BannerPattern.values()[random.nextInt(BannerPattern.values().length)];
-		EnumDyeColor color = EnumDyeColor.values()[random.nextInt(EnumDyeColor.values().length)];
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setString("Pattern", pattern.getHashname());
-		tag.setInteger("Color", color.getDyeDamage());
-		patterns.appendTag(tag);
-		return patterns;
-	}
+//	public static NBTTagList addRandomBanner(NBTTagList patterns, Random random) {
+//		BannerPattern pattern = BannerPattern.values()[random.nextInt(BannerPattern.values().length)];
+//		EnumDyeColor color = EnumDyeColor.values()[random.nextInt(EnumDyeColor.values().length)];
+//		NBTTagCompound tag = new NBTTagCompound();
+//		tag.setString("Pattern", pattern.getHashname());
+//		tag.setInteger("Color", color.getDyeDamage());
+//		patterns.appendTag(tag);
+//		return patterns;
+//	}
 
 //	public static boolean canTallFlowerDuplicate(BlockDoublePlant tallFlowerBlock) {
 //		try {
@@ -121,45 +112,45 @@ public final class EmiPort {
 //		buf.draw(mat, RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
 //	}
 
-	public static List<BakedQuad> getQuads(IBakedModel model) {
-		return model.getQuads(null, null, 0L);
-	}
+//	public static List<BakedQuad> getQuads(IBakedModel model) {
+//		return model.getQuads(null, null, 0L);
+//	}
 
-	public static void draw(BufferBuilder bufferBuilder) {
-		Tessellator.getInstance().draw();
+	public static void draw(Tessellator bufferBuilder) {
+		Tessellator.instance.draw();
 	}
 
 	public static int getGuiScale(Minecraft client) {
-		return new ScaledResolution(client).getScaleFactor();
+		return new ScaledResolution(client, client.displayWidth, client.displayHeight).getScaleFactor();
 	}
 
 	public static void setPositionTexShader() {
-		GlStateManager.enableTexture2D();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 
 	public static void setPositionColorTexShader() {
-		GlStateManager.enableTexture2D();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 
-	public static RegistryNamespaced<ResourceLocation, Item> getItemRegistry() {
-		return Item.REGISTRY;
+	public static FMLControlledNamespacedRegistry<Item> getItemRegistry() {
+		return GameData.getItemRegistry();
 	}
 
-	public static RegistryNamespaced<ResourceLocation, Block> getBlockRegistry() {
-		return Block.REGISTRY;
+	public static FMLControlledNamespacedRegistry<Block> getBlockRegistry() {
+		return GameData.getBlockRegistry();
 	}
 
 	public static Map<String, Fluid> getFluidRegistry() {
 		return FluidRegistry.getRegisteredFluids();
 	}
 
-	public static RegistryNamespaced<ResourceLocation, PotionType> getPotionRegistry() {
-		return PotionType.REGISTRY;
+	public static Map<String, Fluid>  getPotionRegistry() {
+		return FluidRegistry.getRegisteredFluids();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static RegistryNamespaced<ResourceLocation, Enchantment> getEnchantmentRegistry() {
-		return Enchantment.REGISTRY;
+	public static Enchantment[] getEnchantmentRegistry() {
+		return Enchantment.enchantmentsList;
 	}
 
 	public static ButtonWidget newButton(int x, int y, int w, int h, Text name, ButtonWidget.PressAction action) {
@@ -187,13 +178,16 @@ public final class EmiPort {
 	}
 
 	public static ResourceLocation getId(IRecipe recipe) {
-		return ForgeRegistries.RECIPES.getKey(recipe);
+		return SyntheticIdentifier.generateId(recipe);
 	}
 
 	public static @Nullable IRecipe getRecipe(ResourceLocation id) {
 		Minecraft client = Minecraft.getMinecraft();
-		if (client.world != null && id != null) {
-			return ForgeRegistries.RECIPES.getValue(id);
+		if (client.theWorld != null && id != null) {
+			CraftingManager manager = CraftingManager.getInstance();
+			if (manager != null) {
+				return (IRecipe) manager.getRecipeList().stream().filter(i -> i.equals(id));
+			}
 		}
 		return null;
 	}
@@ -202,9 +196,9 @@ public final class EmiPort {
 		return Comparison.compareComponents();
 	}
 
-	public static ItemStack setPotion(ItemStack stack, PotionType potion) {
-		return PotionUtils.addPotionToItemStack(stack, potion);
-	}
+//	public static ItemStack setPotion(ItemStack stack, PotionType potion) {
+//		return PotionUtils.addPotionToItemStack(stack, potion);
+//	}
 
 	public static NBTTagCompound emptyExtraData() {
 		return null;

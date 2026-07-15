@@ -24,7 +24,6 @@ import dev.emi.emi.runtime.EmiReloadLog;
 import dev.emi.emi.runtime.EmiTagKey;
 import dev.emi.emi.util.InheritanceMap;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import shim.net.minecraft.registry.tag.TagKey;
@@ -143,23 +142,23 @@ public class EmiTags {
 		return (List<EmiTagKey<T>>) (List) SORTED_TAGS.getOrDefault(registry.getRegistryName(), shim.java.List.of());
 	}
 
-	public static void registerTagModels(IResourceManager manager, Consumer<ModelResourceLocation> consumer, String variant) {
+	public static void registerTagModels(IResourceManager manager, Consumer<ResourceLocation> consumer, String variant) {
 		EmiTags.MODELED_TAGS.clear();
 		for (ResourceLocation id : EmiPort.findResources(manager, "models/tag/item", s -> s.endsWith(".json"))) {
-			String path = id.getPath();
+			String path = id.getResourcePath();
 			path = path.substring(11, path.length() - 5);
 			String[] parts = path.split("/");
 			if (parts.length > 1) {
-				TagKey<?> key = TagKey.of(TagKey.Type.of(EmiPort.id("minecraft", parts[0])), EmiPort.id(id.getNamespace(), path.substring(1 + parts[0].length())));
-				ResourceLocation mid = EmiPort.id(id.getNamespace(), "tag/" + path);
+				TagKey<?> key = TagKey.of(TagKey.Type.of(EmiPort.id("minecraft", parts[0])), EmiPort.id(id.getResourceDomain(), path.substring(1 + parts[0].length())));
+				ResourceLocation mid = EmiPort.id(id.getResourceDomain(), "tag/" + path);
 				EmiTags.MODELED_TAGS.put(key, mid);
 				/* '/' is illegal character in path, so we need to replace */
-                String replacement = path.replace('_', '/');
+				String replacement = path.replace('_', '/');
 				if (!replacement.equals(path)) {
-					TagKey<?> k = TagKey.of(TagKey.Type.of(EmiPort.id("minecraft", parts[0])), EmiPort.id(id.getNamespace(), replacement.substring(1 + parts[0].length())));
+					TagKey<?> k = TagKey.of(TagKey.Type.of(EmiPort.id("minecraft", parts[0])), EmiPort.id(id.getResourceDomain(), replacement.substring(1 + parts[0].length())));
 					EmiTags.MODELED_TAGS.put(k, mid);
 				}
-				consumer.accept(new ModelResourceLocation(mid, variant));
+				consumer.accept(/*new ResourceLocation(*/mid/*, variant)*/);
 			}
 		}
 		/*
@@ -260,8 +259,8 @@ public class EmiTags {
 		if (a.hasCustomModel() != b.hasCustomModel()) {
 			return a.hasCustomModel() ? a : b;
 		}
-		String an = a.id().getNamespace();
-		String bn = b.id().getNamespace();
+		String an = a.id().getResourceDomain();
+		String bn = b.id().getResourceDomain();
 		if (!an.equals(bn)) {
 			if (an.equals("minecraft")) {
 				return a;

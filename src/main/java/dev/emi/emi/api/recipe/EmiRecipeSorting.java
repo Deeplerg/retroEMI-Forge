@@ -2,6 +2,7 @@ package dev.emi.emi.api.recipe;
 
 import java.util.Comparator;
 
+import dev.emi.emi.mixinsupport.EmiResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -16,7 +17,7 @@ public class EmiRecipeSorting {
 		return NONE;
 	}
 
-	public static Comparator<EmiRecipe> ResourceLocation() {
+	public static Comparator<EmiRecipe> identifier() {
 		return (ar, br) -> {
 			ResourceLocation a = ar.getId();
 			ResourceLocation b = br.getId();
@@ -29,7 +30,7 @@ public class EmiRecipeSorting {
 			} else if (b == null) {
 				return -1;
 			}
-			return a.compareTo(b);
+			return ((EmiResourceLocation) a).compareTo(b);
 		};
 	}
 

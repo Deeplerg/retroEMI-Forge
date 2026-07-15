@@ -35,15 +35,15 @@ public class EmiUtil {
 	public static final Random RANDOM = new Random();
 
 	public static String subId(ResourceLocation id) {
-		return id.getNamespace() + "/" + id.getPath();
+		return id.getResourceDomain() + "/" + id.getResourcePath();
 	}
 
 	public static String subId(Block block) {
-		return subId(EmiPort.getBlockRegistry().getNameForObject(block));
+		return subId(EmiPort.id(EmiPort.getBlockRegistry().getNameForObject(block)));
 	}
 
 	public static String subId(Item item) {
-		return subId(EmiPort.getItemRegistry().getNameForObject(item));
+		return subId(EmiPort.id(EmiPort.getItemRegistry().getNameForObject(item)));
 	}
 
 	public static String subId(Fluid fluid) {
@@ -51,14 +51,14 @@ public class EmiUtil {
 	}
 
 	public static String subId(DyeItem dyeItem) {
-		return String.format("%s#%d", subId(dyeItem.toStack().getItem().getRegistryName()), dyeItem.toStack().getItemDamage());
+		return String.format("%s#%d", subId(EmiPort.id(EmiPort.getItemRegistry().getNameForObject(dyeItem.toStack().getItem()))), dyeItem.toStack().getItemDamage());
 	}
 
 	public static String subId(ItemStack stack) {
 		if (stack.getHasSubtypes()) {
-			return String.format("%s#%d", subId(stack.getItem().getRegistryName()), stack.getItemDamage());
+			return String.format("%s#%d", subId(EmiPort.id(EmiPort.getItemRegistry().getNameForObject(stack.getItem()))), stack.getItemDamage());
 		}
-		return subId(stack.getItem().getRegistryName());
+		return subId(EmiPort.id(EmiPort.getItemRegistry().getNameForObject(stack.getItem())));
 	}
 
 	public static boolean showAdvancedTooltips() {
@@ -67,7 +67,7 @@ public class EmiUtil {
 	}
 
 	public static String translateId(String prefix, ResourceLocation id) {
-		return prefix + id.getNamespace() + "." + id.getPath().replace('/', '.');
+		return prefix + id.getResourceDomain() + "." + id.getResourcePath().replace('/', '.');
 	}
 
 	public static String getModName(String namespace) {

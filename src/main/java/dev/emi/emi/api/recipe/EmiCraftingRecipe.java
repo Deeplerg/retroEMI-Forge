@@ -8,6 +8,7 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import shim.net.minecraft.item.ItemStacks;
 
 public class EmiCraftingRecipe implements EmiRecipe {
 	protected final ResourceLocation id;
@@ -43,7 +44,7 @@ public class EmiCraftingRecipe implements EmiRecipe {
 
 	@Override
 	public List<EmiStack> getOutputs() {
-        return shim.java.List.of(output);
+		return shim.java.List.of(output);
 	}
 
 	@Override
@@ -90,7 +91,7 @@ public class EmiCraftingRecipe implements EmiRecipe {
 			if (s >= 0 && s < input.size()) {
 				widgets.addSlot(input.get(s), i % 3 * 18, i / 3 * 18);
 			} else {
-				widgets.addSlot(EmiStack.of(ItemStack.EMPTY), i % 3 * 18, i / 3 * 18);
+				widgets.addSlot(EmiStack.of(ItemStacks.EMPTY), i % 3 * 18, i / 3 * 18);
 			}
 		}
 		widgets.addSlot(output, 92, 14).large(true).recipeContext(this);

@@ -9,10 +9,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import shim.net.minecraft.client.gui.tooltip.TooltipComponent;
 import shim.net.minecraft.item.DyeItem;
+import shim.net.minecraft.item.ItemStacks;
 import shim.net.minecraft.registry.tag.ItemKey;
 import shim.net.minecraft.text.Text;
 import net.minecraftforge.fluids.Fluid;
@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -104,7 +105,7 @@ public abstract class EmiStack implements EmiIngredient {
 	public abstract ResourceLocation getId();
 
 	public ItemStack getItemStack() {
-		return ItemStack.EMPTY;
+		return ItemStacks.EMPTY;
 	}
 
 	public boolean isEqual(EmiStack stack) {
@@ -168,14 +169,14 @@ public abstract class EmiStack implements EmiIngredient {
 	}
 
 	public static EmiStack of(ItemStack stack) {
-		if (stack.isEmpty()) {
+		if (ItemStacks.isEmpty(stack)) {
 			return EmiStack.EMPTY;
 		}
 		return new ItemEmiStack(stack);
 	}
 
 	public static EmiStack of(ItemStack stack, long amount) {
-		if (stack.isEmpty()) {
+		if (ItemStacks.isEmpty(stack)) {
 			return EmiStack.EMPTY;
 		}
 		return new ItemEmiStack(stack, amount);
@@ -185,7 +186,7 @@ public abstract class EmiStack implements EmiIngredient {
 		if (stack == null || stack.getItem() == null) {
 			return EmiStack.EMPTY;
 		}
-		return fromPotentialTag(stack, stack.getCount());
+		return fromPotentialTag(stack, stack.stackSize);
 	}
 
 	public static EmiIngredient ofPotentialTag(ItemStack stack, long amount) {
@@ -197,8 +198,8 @@ public abstract class EmiStack implements EmiIngredient {
 
 	private static EmiIngredient fromPotentialTag(ItemStack stack, long amount) {
 		if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-			NonNullList<ItemStack> stacks = NonNullList.create();
-			stack.getItem().getSubItems(CreativeTabs.SEARCH, stacks);
+			List<ItemStack> stacks = new ArrayList<>();
+			stack.getItem().getSubItems(stack.getItem(), CreativeTabs.tabAllSearch, stacks);
 			return EmiIngredient.of(stacks.stream().map(EmiStack::of).collect(Collectors.toList()));
 		} else {
 			return new ItemEmiStack(stack, amount);

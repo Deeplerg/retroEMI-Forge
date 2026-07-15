@@ -12,29 +12,29 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.GeneratedSlotWidget;
 import dev.emi.emi.api.widget.SlotWidget;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemDye;
 import net.minecraft.util.ResourceLocation;
 import shim.net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import shim.net.minecraft.util.DyeColor;
 
 public class EmiFireworkRocketRecipe extends EmiPatternCraftingRecipe {
-	private static final List<DyeItem> DYES = Stream.of(EnumDyeColor.values()).map(DyeItem::byColor).collect(Collectors.toList());
+	private static final List<DyeItem> DYES = Stream.of(DyeColor.values()).map(DyeItem::byColor).collect(Collectors.toList());
 
 	public EmiFireworkRocketRecipe(ResourceLocation id) {
 		super(shim.java.List.of(
-				EmiStack.of(Items.PAPER),
-						EmiStack.of(Items.FIREWORK_CHARGE),
-						EmiStack.of(Items.GUNPOWDER)),
-				EmiStack.of(Items.FIREWORKS), id);
+				EmiStack.of(Items.paper),
+						EmiStack.of(Items.firework_charge),
+						EmiStack.of(Items.gunpowder)),
+				EmiStack.of(Items.fireworks), id);
 	}
 
 	@Override
 	public SlotWidget getInputWidget(int slot, int x, int y) {
 		if (slot == 0) {
-			return new SlotWidget(EmiStack.of(Items.PAPER), x, y);
+			return new SlotWidget(EmiStack.of(Items.paper), x, y);
 		} else {
 			final int s = slot - 1;
 			return new GeneratedSlotWidget(r -> {
@@ -53,7 +53,7 @@ public class EmiFireworkRocketRecipe extends EmiPatternCraftingRecipe {
 	}
 
 	private EmiStack getFireworkRocket(Random random) {
-		ItemStack stack = new ItemStack(Items.FIREWORKS);
+		ItemStack stack = new ItemStack(Items.fireworks);
 		NBTTagCompound tag = new NBTTagCompound();
 		NBTTagCompound fireworks = new NBTTagCompound();
 		NBTTagList explosions = new NBTTagList();
@@ -61,9 +61,9 @@ public class EmiFireworkRocketRecipe extends EmiPatternCraftingRecipe {
 		List<EmiStack> items = getItems(random);
 		int gunpowder = 0;
 		for (EmiStack item : items) {
-			if (item.getId() == EmiStack.of(Items.FIREWORK_CHARGE).getId()) {
+			if (item.getId() == EmiStack.of(Items.firework_charge).getId()) {
 				explosions.appendTag(item.getNbt().getTagList("Explosion", 0));
-			} else if (item.isEqual(EmiStack.of(Items.GUNPOWDER))) {
+			} else if (item.isEqual(EmiStack.of(Items.gunpowder))) {
 				gunpowder++;
 			}
 		}
@@ -82,7 +82,7 @@ public class EmiFireworkRocketRecipe extends EmiPatternCraftingRecipe {
 		List<EmiStack> items = Lists.newArrayList();
 		int amount = random.nextInt(3);
 		for (int i = 0; i <= amount; i++) {
-			items.add(EmiStack.of(Items.GUNPOWDER));
+			items.add(EmiStack.of(Items.gunpowder));
 		}
 		amount = random.nextInt(8 - items.size());
 		for (int i = 0; i <= amount; i++) {
@@ -102,7 +102,7 @@ public class EmiFireworkRocketRecipe extends EmiPatternCraftingRecipe {
 	}
 
 	private EmiStack getFireworkStar(Random random) {
-		ItemStack stack = new ItemStack(Items.FIREWORK_CHARGE);
+		ItemStack stack = new ItemStack(Items.firework_charge);
 		NBTTagCompound tag = new NBTTagCompound();
 		NBTTagCompound explosion = new NBTTagCompound();
 		int items = 0;
@@ -132,7 +132,7 @@ public class EmiFireworkRocketRecipe extends EmiPatternCraftingRecipe {
 		List<DyeItem> dyeItems = getDyes(random, 8 - items);
 		List<Integer> colors = Lists.newArrayList();
 		for (DyeItem dyeItem : dyeItems) {
-			colors.add(ItemDye.DYE_COLORS[dyeItem.color().ordinal()]);
+			colors.add(dyeItem.color().getFireworkColor());
 		}
 		explosion.setIntArray("Colors", colors.stream().mapToInt(Integer::intValue).toArray());
 
@@ -142,7 +142,7 @@ public class EmiFireworkRocketRecipe extends EmiPatternCraftingRecipe {
 			List<DyeItem> dyeItemsFaded = getDyes(random, 8);
 			List<Integer> fadedColors = Lists.newArrayList();
 			for (DyeItem dyeItem : dyeItemsFaded) {
-				fadedColors.add(ItemDye.DYE_COLORS[dyeItem.color().ordinal()]);
+				fadedColors.add(dyeItem.color().getFireworkColor());
 			}
 			explosion.setIntArray("FadeColors", fadedColors.stream().mapToInt(Integer::intValue).toArray());
 		}

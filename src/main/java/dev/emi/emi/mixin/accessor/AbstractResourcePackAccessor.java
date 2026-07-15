@@ -8,6 +8,6 @@ import java.io.File;
 
 @Mixin(AbstractResourcePack.class)
 public interface AbstractResourcePackAccessor {
-    @Accessor("resourcePackFile")
-    File getResourcePackFile();
+	@Accessor("resourcePackFile")
+	File getResourcePackFile();
 }
