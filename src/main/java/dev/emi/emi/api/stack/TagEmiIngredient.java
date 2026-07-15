@@ -22,7 +22,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
-import org.joml.Matrix4f;
+import org.lwjgl.util.vector.Matrix4f;
 import shim.net.minecraft.client.gui.DrawContext;
 import shim.net.minecraft.client.gui.tooltip.TooltipComponent;
 import shim.net.minecraft.registry.tag.TagKey;
@@ -123,7 +123,9 @@ public class TagEmiIngredient implements EmiIngredient {
 				context.matrices().push();
 				client.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 				context.matrices().translate(x + 8, y + 8, 150);
-				context.matrices().multiplyPositionMatrix(new Matrix4f().scaling(1.0f, -1.0f, 1.0f));
+				Matrix4f mat = new Matrix4f();
+				mat.m11 = -1.0f;
+				context.matrices().multiplyPositionMatrix(mat);
 				context.matrices().scale(16.0f, 16.0f, 16.0f);
 
 				model.getItemCameraTransforms().getTransform(ItemCameraTransforms.TransformType.GUI).apply(Optional.empty());

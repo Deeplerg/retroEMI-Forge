@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.client.renderer.vertex.VertexBuffer;
-import org.joml.Matrix4f;
+import org.lwjgl.util.vector.Matrix4f;
 
 import com.google.common.collect.Lists;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Sets;
+import org.lwjgl.util.vector.Vector3f;
 import shim.com.mojang.blaze3d.systems.RenderSystem;
 
 import dev.emi.emi.EmiPort;
@@ -192,7 +192,7 @@ public class StackBatcher {
 		RenderSystem.enableDepthTest();
 		RenderHelper.enableGUIStandardItemLighting();
 		Matrix4f mat = new Matrix4f();
-		mat.mul(new Matrix4f().translation(x, y, 0));
+        Matrix4f.mul(mat, new Matrix4f().translate(new Vector3f(x, y, 0)), mat);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		for (Map.Entry<RenderLayer, ByteBuffer> en : buffers.entrySet()) {
 			en.getKey().startDrawing();

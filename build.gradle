@@ -349,3 +349,14 @@ tasks.register('generateTemplates') {
 
 apply from: 'gradle/scripts/publishing.gradle'
 apply from: 'gradle/scripts/extra.gradle'
+
+allprojects {
+    base.archivesName = project.mod_id
+    ext.mavenVersion = "${rootProject.version}"
+    if (System.getenv("RELEASE") == null) {
+        ext.mavenVersion += "-SNAPSHOT"
+    }
+    ext.mavenVersion += "+${rootProject.minecraftVersion}"
+    version = "${project.ext.mavenVersion}+${project.enabled_platforms}"
+}
+
