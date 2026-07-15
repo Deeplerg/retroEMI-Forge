@@ -414,7 +414,7 @@ public class ConfigScreen extends REMIScreen {
 				return false;
 			}
 			if (super.keyPressed(keyCode, scanCode, modifiers)) {
-				return super.keyPressed(keyCode, scanCode, modifiers);
+				return true;
 			}
 			if (this.getFocused() instanceof TextFieldWidget tfw && tfw.isFocused()) {
 				if (keyCode == GLFW.GLFW_KEY_ESCAPE) {

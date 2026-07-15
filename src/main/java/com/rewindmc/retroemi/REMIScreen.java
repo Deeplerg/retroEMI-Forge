@@ -3,6 +3,7 @@ package com.rewindmc.retroemi;
 import java.io.IOException;
 import java.util.List;
 
+import dev.emi.emi.platform.EmiAgnos;
 import org.jetbrains.annotations.Nullable;
 import shim.org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Keyboard;
@@ -75,8 +76,9 @@ public class REMIScreen extends GuiScreen implements ParentElement {
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 		if (Mouse.getEventDWheel() != 0) {
-			// If it is lwjgl3, dividing by 120D is not necessary
-			mouseScrolled(lastMouseX, lastMouseY, Mouse.getEventDWheel() / 120D);
+			double factor = 1D;
+			if (!EmiAgnos.isModLoaded("cleanroom")) factor = 120D;
+			mouseScrolled(lastMouseX, lastMouseY, Mouse.getEventDWheel() / factor);
 		}
 	}
 

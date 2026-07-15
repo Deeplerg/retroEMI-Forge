@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import dev.emi.emi.mixin.accessor.GuiTextFieldAccessor;
+import dev.emi.emi.platform.EmiAgnos;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -211,8 +212,9 @@ public class RetroEMI {
 				}
 				int dwheel = Mouse.getEventDWheel();
 				if (dwheel != 0) {
-					// If it is lwjgl3, dividing by 120D is not necessary
-					if (EmiScreenManager.mouseScrolled(mx, my, dwheel / 120D)) {
+					double factor = 1D;
+					if (!EmiAgnos.isModLoaded("cleanroom")) factor = 120D;
+					if (EmiScreenManager.mouseScrolled(mx, my, dwheel / factor)) {
 						return true;
 					}
 				}
