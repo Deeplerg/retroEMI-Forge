@@ -46,9 +46,7 @@ public abstract class InventoryEffectRendererMixin extends GuiContainer {
 		guiLeft = Math.max(guiLeft, REMIMixinHooks.EFFECT_WIDTH);
 	}
 
-	@Inject(at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/inventory/GuiContainer;drawScreen(IIF)V", shift = At.Shift.AFTER),
-		method = "drawScreen")
+	@Inject(at = @At(value = "HEAD"), method = "drawScreen")
 	private void drawScreen(int mouseX, int mouseY, float par3, CallbackInfo ci) {
 		if (EmiConfig.effectLocation == EffectLocation.TOP) {
 			emi$drawCenteredEffects(DrawContext.INSTANCE, mouseX, mouseY);
