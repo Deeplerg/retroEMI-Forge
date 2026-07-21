@@ -162,7 +162,7 @@ public class EmiReloadManager {
 						.sorted((a, b) -> Integer.compare(entrypointPriority(a), entrypointPriority(b))).collect(java.util.stream.Collectors.toList()));
 
 					if (NemiPlugin.isNEILoaded) {
-						plugins.add(new EmiPluginContainer(new NemiPlugin(), "nemi"));
+						plugins.add(new EmiPluginContainer(new NemiPlugin(), NemiPlugin.DOMAIN));
 					}
 					EmiLog.info("Found plugins in " + (System.currentTimeMillis() - t) + "ms");
 					EmiInitRegistry initRegistry = new EmiInitRegistryImpl();
