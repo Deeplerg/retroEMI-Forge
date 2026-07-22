@@ -33,6 +33,9 @@ public class NemiPlugin implements EmiPlugin {
                 Class.forName("codechicken.nei.api.INEIGuiHandler"));
             Object handler = new NemiScreenHandler();
             registerMethod.invoke(null, handler);
+
+            // add tree button to nei
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new NemiRecipeTreeInjector());
         } catch (Exception e) {
             EmiLog.error("Failed to register NEI GUI handler via reflection", e);
         }
