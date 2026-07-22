@@ -32,10 +32,10 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Extract changelogs from ChangeLog.md
+      - name: Extract changelogs from CHANGELOG.md
         id: extract_changelog
         run: |
-          cat ChangeLog.md > changelog.txt
+          cat CHANGELOG.md > changelog.txt
 
           echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
           cat changelog.txt >> $GITHUB_OUTPUT
