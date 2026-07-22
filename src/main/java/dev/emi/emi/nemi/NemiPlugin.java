@@ -2,6 +2,9 @@ package dev.emi.emi.nemi;
 
 import codechicken.nei.LayoutManager;
 import codechicken.nei.LayoutStyleMinecraft;
+import codechicken.nei.recipe.GuiCraftingRecipe;
+import codechicken.nei.recipe.ICraftingHandler;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.widget.Bounds;
@@ -12,31 +15,65 @@ import net.minecraft.client.Minecraft;
 import java.lang.reflect.Method;
 
 public class NemiPlugin implements EmiPlugin {
-	public static boolean isNEILoaded = false;
-	private static final Minecraft client = Minecraft.getMinecraft();
+    public static final String DOMAIN = "nemi";
 
-	public static void onLoad() {
-		try {
-			Class<?> apiClass = Class.forName("codechicken.nei.api.API");
-			Method registerMethod = apiClass.getMethod("registerNEIGuiHandler",
-				Class.forName("codechicken.nei.api.INEIGuiHandler"));
-			Object handler = new NemiScreenHandler();
-			registerMethod.invoke(null, handler);
-		} catch (Exception e) {
-			EmiLog.error("Failed to register NEI GUI handler via reflection", e);
-		}
-		isNEILoaded = true;
-	}
+    public static boolean isNEILoaded = false;
 
-	@Override
-	public void register(EmiRegistry registry) {
-		registry.addGenericExclusionArea((screen, consumer) -> {
-			final LayoutStyleMinecraft layout = (LayoutStyleMinecraft) LayoutManager.getLayoutStyle();
-			if (layout != null && !(client.currentScreen instanceof RecipeScreen)) {
-				final int rows = (int) Math.ceil((double) layout.buttonCount / layout.numButtons);
-				final int diff = rows * 19 + 2;
-				consumer.accept(new Bounds(0, 0, layout.numButtons * 19, diff));
-			}
-		});
-	}
+    // NEI buttons are 18x18 pixels, with 1 pixel of spacing (19 pixels total per button step).
+    // The block of buttons has a 2-pixel outer margin.
+    private static final int NEI_BUTTON_SPACING = 19;
+    private static final int NEI_OUTER_MARGIN = 2;
+
+    private static final Minecraft client = Minecraft.getMinecraft();
+
+    public static void onLoad() {
+        try {
+            Class<?> apiClass = Class.forName("codechicken.nei.api.API");
+            Method registerMethod = apiClass.getMethod("registerNEIGuiHandler",
+                Class.forName("codechicken.nei.api.INEIGuiHandler"));
+            Object handler = new NemiScreenHandler();
+            registerMethod.invoke(null, handler);
+        } catch (Exception e) {
+            EmiLog.error("Failed to register NEI GUI handler via reflection", e);
+        }
+        isNEILoaded = true;
+    }
+
+    @Override
+    public void register(EmiRegistry registry) {
+        registerExclusionArea(registry);
+
+        if (isNEILoaded) {
+            registerNeiRecipes(registry);
+        }
+    }
+
+    private void registerExclusionArea(EmiRegistry registry) {
+        registry.addGenericExclusionArea((screen, consumer) -> {
+            if (!(LayoutManager.getLayoutStyle() instanceof LayoutStyleMinecraft layout)) {
+                return;
+            }
+
+            if (!(client.currentScreen instanceof RecipeScreen)) {
+                consumer.accept(getNeiButtonExclusionBounds(layout));
+            }
+        });
+    }
+
+    private Bounds getNeiButtonExclusionBounds(LayoutStyleMinecraft layout) {
+        int rows = (int) Math.ceil((double) layout.buttonCount / layout.numButtons);
+        int width = layout.numButtons * NEI_BUTTON_SPACING;
+        int height = rows * NEI_BUTTON_SPACING + NEI_OUTER_MARGIN;
+
+        return new Bounds(0, 0, width, height);
+    }
+
+    private void registerNeiRecipes(EmiRegistry registry) {
+        for (ICraftingHandler baseHandler : GuiCraftingRecipe.craftinghandlers) {
+            if (baseHandler instanceof TemplateRecipeHandler templateHandler) {
+                RecipeHarvester harvester = new RecipeHarvester(registry, templateHandler);
+                harvester.harvest();
+            }
+        }
+    }
 }
