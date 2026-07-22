@@ -53,7 +53,11 @@ public class EmiTags {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static <T> List<EmiStack> getRawValues(EmiTagKey<T> key) {
-		if (key.isOf(EmiPort.getBlockRegistry())) {
+		//`key` can be an item key,
+		// but since item tags and block tags can overlap,
+		// `isOf(getBlockRegistry())` might return true.
+		// therefore we must explicitly check if this a block
+		if (key.registry() == TagKey.Type.BLOCK) {
 			return key.stream().map(e -> EmiStack.of((Block) e)).collect(Collectors.toList());
 		}
 		EmiRegistryAdapter adapter = ADAPTERS_BY_REGISTRY.get(key.registry());
