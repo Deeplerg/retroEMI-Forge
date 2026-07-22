@@ -17,78 +17,78 @@ import java.util.Map;
  */
 public class CategoryIconGuesser {
 
-	private static final List<String> STRIP_SUFFIXES = shim.java.List.of(
-		" recipes", " crafting", " smelting", " brewing"
-	);
+    private static final List<String> STRIP_SUFFIXES = shim.java.List.of(
+        " recipes", " crafting", " smelting", " brewing"
+    );
 
-	private Map<String, EmiStack> nameCache = null;
+    private Map<String, EmiStack> nameCache = null;
 
-	public EmiStack guessIcon(String recipeName) {
-		if (recipeName == null || recipeName.isEmpty()) {
-			return EmiStack.EMPTY;
-		}
+    public EmiStack guessIcon(String recipeName) {
+        if (recipeName == null || recipeName.isEmpty()) {
+            return EmiStack.EMPTY;
+        }
 
-		buildCacheIfNeeded();
+        buildCacheIfNeeded();
 
-		String cleanName = normalizeAndStrip(recipeName);
+        String cleanName = normalizeAndStrip(recipeName);
 
-		if (nameCache.containsKey(cleanName)) {
-			return nameCache.get(cleanName);
-		}
+        if (nameCache.containsKey(cleanName)) {
+            return nameCache.get(cleanName);
+        }
 
-		for (Map.Entry<String, EmiStack> entry : nameCache.entrySet()) {
-			String cachedName = entry.getKey();
-			if (cachedName.contains(cleanName) || cleanName.contains(cachedName)) {
-				return entry.getValue();
-			}
-		}
+        for (Map.Entry<String, EmiStack> entry : nameCache.entrySet()) {
+            String cachedName = entry.getKey();
+            if (cachedName.contains(cleanName) || cleanName.contains(cachedName)) {
+                return entry.getValue();
+            }
+        }
 
-		return EmiStack.EMPTY;
-	}
+        return EmiStack.EMPTY;
+    }
 
-	private String normalizeAndStrip(String name) {
-		String normalized = EnumChatFormatting.getTextWithoutFormattingCodes(name).toLowerCase().trim();
-		for (String suffix : STRIP_SUFFIXES) {
-			if (normalized.endsWith(suffix)) {
-				normalized = normalized.substring(0, normalized.length() - suffix.length()).trim();
-			}
-		}
-		return normalized;
-	}
+    private String normalizeAndStrip(String name) {
+        String normalized = EnumChatFormatting.getTextWithoutFormattingCodes(name).toLowerCase().trim();
+        for (String suffix : STRIP_SUFFIXES) {
+            if (normalized.endsWith(suffix)) {
+                normalized = normalized.substring(0, normalized.length() - suffix.length()).trim();
+            }
+        }
+        return normalized;
+    }
 
-	private void buildCacheIfNeeded() {
-		if (nameCache != null) {
-			return;
-		}
-		nameCache = new HashMap<>();
+    private void buildCacheIfNeeded() {
+        if (nameCache != null) {
+            return;
+        }
+        nameCache = new HashMap<>();
 
-		for (Item item : RetroEMI.getAllItems()) {
-			if (item == null) {
-				continue;
-			}
+        for (Item item : RetroEMI.getAllItems()) {
+            if (item == null) {
+                continue;
+            }
 
-			List<ItemStack> subItems = new ArrayList<>();
-			try {
-				item.getSubItems(item, CreativeTabs.tabAllSearch, subItems);
-			} catch (Exception ignored) {
-			}
+            List<ItemStack> subItems = new ArrayList<>();
+            try {
+                item.getSubItems(item, CreativeTabs.tabAllSearch, subItems);
+            } catch (Exception ignored) {
+            }
 
-			if (subItems.isEmpty()) {
-				subItems.add(new ItemStack(item));
-			}
+            if (subItems.isEmpty()) {
+                subItems.add(new ItemStack(item));
+            }
 
-			for (ItemStack stack : subItems) {
-				if (stack == null || stack.getItem() == null) {
-					continue;
-				}
-				try {
-					String displayName = EnumChatFormatting.getTextWithoutFormattingCodes(stack.getDisplayName()).toLowerCase().trim();
-					if (!nameCache.containsKey(displayName)) {
-						nameCache.put(displayName, EmiStack.of(stack));
-					}
-				} catch (Exception ignored) {
-				}
-			}
-		}
-	}
+            for (ItemStack stack : subItems) {
+                if (stack == null || stack.getItem() == null) {
+                    continue;
+                }
+                try {
+                    String displayName = EnumChatFormatting.getTextWithoutFormattingCodes(stack.getDisplayName()).toLowerCase().trim();
+                    if (!nameCache.containsKey(displayName)) {
+                        nameCache.put(displayName, EmiStack.of(stack));
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
 }

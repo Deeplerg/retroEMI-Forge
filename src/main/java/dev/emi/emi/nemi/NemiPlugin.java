@@ -15,65 +15,65 @@ import net.minecraft.client.Minecraft;
 import java.lang.reflect.Method;
 
 public class NemiPlugin implements EmiPlugin {
-	public static final String DOMAIN = "nemi";
+    public static final String DOMAIN = "nemi";
 
-	public static boolean isNEILoaded = false;
+    public static boolean isNEILoaded = false;
 
-	// NEI buttons are 18x18 pixels, with 1 pixel of spacing (19 pixels total per button step).
-	// The block of buttons has a 2-pixel outer margin.
-	private static final int NEI_BUTTON_SPACING = 19;
-	private static final int NEI_OUTER_MARGIN = 2;
+    // NEI buttons are 18x18 pixels, with 1 pixel of spacing (19 pixels total per button step).
+    // The block of buttons has a 2-pixel outer margin.
+    private static final int NEI_BUTTON_SPACING = 19;
+    private static final int NEI_OUTER_MARGIN = 2;
 
-	private static final Minecraft client = Minecraft.getMinecraft();
+    private static final Minecraft client = Minecraft.getMinecraft();
 
-	public static void onLoad() {
-		try {
-			Class<?> apiClass = Class.forName("codechicken.nei.api.API");
-			Method registerMethod = apiClass.getMethod("registerNEIGuiHandler",
-				Class.forName("codechicken.nei.api.INEIGuiHandler"));
-			Object handler = new NemiScreenHandler();
-			registerMethod.invoke(null, handler);
-		} catch (Exception e) {
-			EmiLog.error("Failed to register NEI GUI handler via reflection", e);
-		}
-		isNEILoaded = true;
-	}
+    public static void onLoad() {
+        try {
+            Class<?> apiClass = Class.forName("codechicken.nei.api.API");
+            Method registerMethod = apiClass.getMethod("registerNEIGuiHandler",
+                Class.forName("codechicken.nei.api.INEIGuiHandler"));
+            Object handler = new NemiScreenHandler();
+            registerMethod.invoke(null, handler);
+        } catch (Exception e) {
+            EmiLog.error("Failed to register NEI GUI handler via reflection", e);
+        }
+        isNEILoaded = true;
+    }
 
-	@Override
-	public void register(EmiRegistry registry) {
-		registerExclusionArea(registry);
+    @Override
+    public void register(EmiRegistry registry) {
+        registerExclusionArea(registry);
 
-		if (isNEILoaded) {
-			registerNeiRecipes(registry);
-		}
-	}
+        if (isNEILoaded) {
+            registerNeiRecipes(registry);
+        }
+    }
 
-	private void registerExclusionArea(EmiRegistry registry) {
-		registry.addGenericExclusionArea((screen, consumer) -> {
-			if (!(LayoutManager.getLayoutStyle() instanceof LayoutStyleMinecraft layout)) {
-				return;
-			}
+    private void registerExclusionArea(EmiRegistry registry) {
+        registry.addGenericExclusionArea((screen, consumer) -> {
+            if (!(LayoutManager.getLayoutStyle() instanceof LayoutStyleMinecraft layout)) {
+                return;
+            }
 
-			if (!(client.currentScreen instanceof RecipeScreen)) {
-				consumer.accept(getNeiButtonExclusionBounds(layout));
-			}
-		});
-	}
+            if (!(client.currentScreen instanceof RecipeScreen)) {
+                consumer.accept(getNeiButtonExclusionBounds(layout));
+            }
+        });
+    }
 
-	private Bounds getNeiButtonExclusionBounds(LayoutStyleMinecraft layout) {
-		int rows = (int) Math.ceil((double) layout.buttonCount / layout.numButtons);
-		int width = layout.numButtons * NEI_BUTTON_SPACING;
-		int height = rows * NEI_BUTTON_SPACING + NEI_OUTER_MARGIN;
+    private Bounds getNeiButtonExclusionBounds(LayoutStyleMinecraft layout) {
+        int rows = (int) Math.ceil((double) layout.buttonCount / layout.numButtons);
+        int width = layout.numButtons * NEI_BUTTON_SPACING;
+        int height = rows * NEI_BUTTON_SPACING + NEI_OUTER_MARGIN;
 
-		return new Bounds(0, 0, width, height);
-	}
+        return new Bounds(0, 0, width, height);
+    }
 
-	private void registerNeiRecipes(EmiRegistry registry) {
-		for (ICraftingHandler baseHandler : GuiCraftingRecipe.craftinghandlers) {
-			if (baseHandler instanceof TemplateRecipeHandler templateHandler) {
-				RecipeHarvester harvester = new RecipeHarvester(registry, templateHandler);
-				harvester.harvest();
-			}
-		}
-	}
+    private void registerNeiRecipes(EmiRegistry registry) {
+        for (ICraftingHandler baseHandler : GuiCraftingRecipe.craftinghandlers) {
+            if (baseHandler instanceof TemplateRecipeHandler templateHandler) {
+                RecipeHarvester harvester = new RecipeHarvester(registry, templateHandler);
+                harvester.harvest();
+            }
+        }
+    }
 }

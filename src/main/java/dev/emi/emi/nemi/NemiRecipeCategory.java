@@ -7,15 +7,15 @@ import net.minecraft.util.ResourceLocation;
 import shim.net.minecraft.text.Text;
 
 public class NemiRecipeCategory extends EmiRecipeCategory {
-	private final String recipeName;
+    private final String recipeName;
 
-	public NemiRecipeCategory(ResourceLocation id, EmiStack icon, String recipeName) {
-		super(id, icon);
-		this.recipeName = recipeName;
-	}
+    public NemiRecipeCategory(ResourceLocation id, EmiStack icon, String recipeName) {
+        super(id, icon);
+        this.recipeName = recipeName;
+    }
 
-	@Override
-	public Text getName() {
-		return EmiPort.literal(recipeName);
-	}
+    @Override
+    public Text getName() {
+        return EmiPort.literal(recipeName);
+    }
 }
