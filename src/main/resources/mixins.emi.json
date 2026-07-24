@@ -20,11 +20,12 @@
     "accessor.GuiContainerAccessor",
     "accessor.GuiTextFieldAccessor",
     "accessor.PlayerControllerMPAccessor",
-    "accessor.SimpleReloadableResourceManagerAccessor"
+    "accessor.SimpleReloadableResourceManagerAccessor",
+    "nemi.LayoutStyleMinecraftMixin",
+    "nemi.NEIRecipeWidgetMixin"
   ],
   "mixins": [
     "JSONModelMixin",
-    "LayoutStyleMinecraftMixin",
     "ResourceLocationMixin",
     "accessor.CraftingManagerAccessor",
     "accessor.InventoryCraftingAccessor",
