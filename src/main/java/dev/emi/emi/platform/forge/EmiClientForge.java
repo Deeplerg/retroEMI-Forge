@@ -2,6 +2,7 @@ package dev.emi.emi.platform.forge;
 
 import com.rewindmc.retroemi.EmiResourceManager;
 import com.rewindmc.retroemi.RetroEMI;
+import com.rewindmc.retroemi.RetroEMICommonUtils;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.data.EmiData;
 import dev.emi.emi.mixin.accessor.GuiContainerAccessor;
@@ -99,7 +100,7 @@ public class EmiClientForge {
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
 		if (event.phase == TickEvent.Phase.START) {
-			RetroEMI.tick();
+			RetroEMICommonUtils.tick();
 		}
 	}
 

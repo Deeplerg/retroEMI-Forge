@@ -1,5 +1,7 @@
 package dev.emi.emi.platform.forge;
 
+import com.gtnewhorizon.gtnhlib.ClientProxy;
+import cpw.mods.fml.common.FMLCommonHandler;
 import dev.emi.emi.network.CommandS2CPacket;
 import dev.emi.emi.network.CreateItemC2SPacket;
 import dev.emi.emi.network.EmiChessPacket;
@@ -18,19 +20,27 @@ import cpw.mods.fml.relauncher.Side;
 public class EmiPacketHandler {
 	public static final SimpleNetworkWrapper CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel("emi");
 
-	public static void init() {
-		int i = 0;
-		CHANNEL.registerMessage(new FillRecipeC2SPacketHandler(), FillRecipeC2SPacket.class, i++, Side.SERVER);
-		CHANNEL.registerMessage(new CreateItemC2SPacketHandler(), CreateItemC2SPacket.class, i++, Side.SERVER);
-		CHANNEL.registerMessage(new EmiChessC2SPacketHandler(), EmiChessPacket.C2S.class, i++, Side.SERVER);
-		CHANNEL.registerMessage(new PingS2CPacketHandler(), PingS2CPacket.class, i++, Side.CLIENT);
-		CHANNEL.registerMessage(new CommandS2CPacketHandler(), CommandS2CPacket.class, i++, Side.CLIENT);
-		CHANNEL.registerMessage(new EmiChessS2CPacketHandler(), EmiChessPacket.S2C.class, i++, Side.CLIENT);
-	}
+    public static void init() {
+        int i = 0;
+        CHANNEL.registerMessage(new FillRecipeC2SPacketHandler(), FillRecipeC2SPacket.class, i++, Side.SERVER);
+        CHANNEL.registerMessage(new CreateItemC2SPacketHandler(), CreateItemC2SPacket.class, i++, Side.SERVER);
+        CHANNEL.registerMessage(new EmiChessC2SPacketHandler(), EmiChessPacket.C2S.class, i++, Side.SERVER);
+
+        boolean isClient = FMLCommonHandler.instance().getSide().isClient();
+        CHANNEL.registerMessage(isClient ? ClientProxy.getPingHandler() : new DummyClientHandler<>(), PingS2CPacket.class, i++, Side.CLIENT);
+        CHANNEL.registerMessage(isClient ? ClientProxy.getCommandHandler() : new DummyClientHandler<>(), CommandS2CPacket.class, i++, Side.CLIENT);
+        CHANNEL.registerMessage(isClient ? ClientProxy.getChessHandler() : new DummyClientHandler<>(), EmiChessPacket.S2C.class, i++, Side.CLIENT);
+    }
 
 	public static EmiPacket wrap(EmiPacket packet) {
 		return packet;
 	}
+
+    private static class ClientProxy {
+        static IMessageHandler<PingS2CPacket, IMessage> getPingHandler() { return new PingS2CPacketHandler(); }
+        static IMessageHandler<CommandS2CPacket, IMessage> getCommandHandler() { return new CommandS2CPacketHandler(); }
+        static IMessageHandler<EmiChessPacket.S2C, IMessage> getChessHandler() { return new EmiChessS2CPacketHandler(); }
+    }
 
 	public static class FillRecipeC2SPacketHandler implements IMessageHandler<FillRecipeC2SPacket, IMessage> {
 		@Override
@@ -82,4 +92,11 @@ public class EmiPacketHandler {
 			return null;
 		}
 	}
+
+    public static class DummyClientHandler<T extends IMessage> implements IMessageHandler<T, IMessage> {
+        @Override
+        public IMessage onMessage(T message, MessageContext ctx) {
+            return null;
+        }
+    }
 }

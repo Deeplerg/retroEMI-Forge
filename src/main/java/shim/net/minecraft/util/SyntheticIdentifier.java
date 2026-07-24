@@ -1,6 +1,7 @@
 package shim.net.minecraft.util;
 
 import com.rewindmc.retroemi.RetroEMI;
+import com.rewindmc.retroemi.RetroEMICommonUtils;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.recipe.EmiCraftingRecipe;
 import dev.emi.emi.api.stack.EmiIngredient;
@@ -64,7 +65,7 @@ public class SyntheticIdentifier {
 			if (is.getItem() == null) {
 				return "null";
 			} else {
-				return RetroEMI.getId(is) +
+				return RetroEMICommonUtils.getId(is) +
 					(is.getHasSubtypes() || is.hasTagCompound() ? "#" : "") +
 					(is.getHasSubtypes() ? is.getItemDamage() : "") +
 					(is.getHasSubtypes() && is.hasTagCompound() ? "#" : "") +
