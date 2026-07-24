@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.rewindmc.retroemi.RetroEMICommonUtils;
 import it.unimi.dsi.fastutil.ints.IntList;
 import shim.org.lwjgl.glfw.GLFW;
 
@@ -602,7 +603,7 @@ public class EmiConfig {
 				String commentText = "";
 				if (comment != null) {
 					commentText += "\t/**\n";
-					for (String line : RetroEMI.wrapLines(comment.value(), 80)) {
+					for (String line : RetroEMICommonUtils.wrapLines(comment.value(), 80)) {
 						commentText += "\t * ";
 						commentText += line;
 						commentText += "\n";
@@ -637,7 +638,7 @@ public class EmiConfig {
 			firstCategory = false;
 
 			ret += "#" + category.getKey() + " {\n";
-			ret += RetroEMI.join(category.getValue(), "\n");
+			ret += RetroEMICommonUtils.join(category.getValue(), "\n");
 			ret += "}\n";
 		}
 		return ret;

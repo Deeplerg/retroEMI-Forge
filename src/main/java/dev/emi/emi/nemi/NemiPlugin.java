@@ -5,6 +5,8 @@ import codechicken.nei.LayoutStyleMinecraft;
 import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.ICraftingHandler;
 import codechicken.nei.recipe.TemplateRecipeHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.widget.Bounds;
@@ -24,8 +26,6 @@ public class NemiPlugin implements EmiPlugin {
     private static final int NEI_BUTTON_SPACING = 19;
     private static final int NEI_OUTER_MARGIN = 2;
 
-    private static final Minecraft client = Minecraft.getMinecraft();
-
     public static void onLoad() {
         try {
             Class<?> apiClass = Class.forName("codechicken.nei.api.API");
@@ -34,8 +34,10 @@ public class NemiPlugin implements EmiPlugin {
             Object handler = new NemiScreenHandler();
             registerMethod.invoke(null, handler);
 
-            // add tree button to nei
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new NemiRecipeTreeInjector());
+            if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+                // add tree button to nei
+                net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new NemiRecipeTreeInjector());
+            }
         } catch (Exception e) {
             EmiLog.error("Failed to register NEI GUI handler via reflection", e);
         }
@@ -44,7 +46,9 @@ public class NemiPlugin implements EmiPlugin {
 
     @Override
     public void register(EmiRegistry registry) {
-        registerExclusionArea(registry);
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            registerExclusionArea(registry);
+        }
 
         if (isNEILoaded) {
             registerNeiRecipes(registry);
@@ -57,7 +61,7 @@ public class NemiPlugin implements EmiPlugin {
                 return;
             }
 
-            if (!(client.currentScreen instanceof RecipeScreen)) {
+            if (!(Minecraft.getMinecraft().currentScreen instanceof RecipeScreen)) {
                 consumer.accept(getNeiButtonExclusionBounds(layout));
             }
         });
