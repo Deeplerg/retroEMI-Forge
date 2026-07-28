@@ -67,8 +67,10 @@ public class NemiPlugin implements EmiPlugin {
 				int width = layout.numButtons * NEI_BUTTON_SPACING;
 				int height = rows * NEI_BUTTON_SPACING + NEI_OUTER_MARGIN;
 				consumer.accept(new Bounds(0, 0, width, height));
-				consumer.accept(new Bounds(emiButton.x, emiButton.y - 22, emiButton.getWidth(), emiButton.getHeight()));
-				consumer.accept(new Bounds(treeButton.x, treeButton.y - 22, treeButton.getWidth(), treeButton.getHeight()));
+				int emiButtonVerticalOffset = emiButton.getHeight() - NEI_OUTER_MARGIN;
+				int treeButtonVerticalOffset = treeButton.getHeight() - NEI_OUTER_MARGIN;
+				consumer.accept(new Bounds(emiButton.x, emiButton.y - emiButtonVerticalOffset, emiButton.getWidth(), emiButton.getHeight()));
+				consumer.accept(new Bounds(treeButton.x, treeButton.y - treeButtonVerticalOffset, treeButton.getWidth(), treeButton.getHeight()));
 			}
 		});
 	}
