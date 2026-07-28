@@ -7,6 +7,7 @@ import codechicken.nei.drawable.DrawableBuilder;
 import codechicken.nei.drawable.DrawableResource;
 import codechicken.nei.recipe.GuiRecipeButton;
 import codechicken.nei.recipe.GuiRecipeTab;
+import codechicken.nei.recipe.HandlerInfo;
 import codechicken.nei.recipe.Recipe;
 import codechicken.nei.recipe.RecipeHandlerRef;
 import codechicken.nei.recipe.TemplateRecipeHandler;
@@ -18,9 +19,7 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.bom.BoM;
 import dev.emi.emi.runtime.EmiDrawContext;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.opengl.GL11;
 import shim.com.mojang.blaze3d.systems.RenderSystem;
-import shim.net.minecraft.client.gui.DrawContext;
 
 import java.util.List;
 import java.util.Map;
@@ -61,11 +60,22 @@ public class GuiTreeButton extends GuiRecipeButton {
 	public GuiTreeButton(RecipeHandlerRef handlerRef, int x, int y) {
 		super(handlerRef, x, y, BUTTON_ID_START + handlerRef.recipeIndex, "品");// 难绷4个方形≈品
 		this.recipe = Recipe.of(this.handlerRef);
+
+        String overlayId = this.handlerRef.handler.getOverlayIdentifier();
+        if (overlayId == null) {
+            overlayId = "unknown";
+        }
+
+		HandlerInfo info = GuiRecipeTab.getHandlerInfo(this.handlerRef.handler);
+		EmiStack iconStack = (info != null && info.getItemStack() != null)
+			? EmiStack.of(info.getItemStack())
+			: EmiStack.EMPTY;
+
 		this.nemiRecipe = new NemiRecipe(
-			new NemiRecipeCategory(EmiPort.id(NemiPlugin.DOMAIN, this.handlerRef.handler.getOverlayIdentifier()),
-				EmiStack.of(GuiRecipeTab.getHandlerInfo(this.handlerRef.handler).getItemStack()), this.handlerRef.handler.getRecipeName()),
+            new NemiRecipeCategory(EmiPort.id(NemiPlugin.DOMAIN, overlayId),
+				iconStack, this.handlerRef.handler.getRecipeName()),
 			(TemplateRecipeHandler) this.handlerRef.handler, this.handlerRef.recipeIndex,
-			EmiPort.id(NemiPlugin.DOMAIN, this.handlerRef.handler.getOverlayIdentifier() + "/" + this.handlerRef.recipeIndex));
+            EmiPort.id(NemiPlugin.DOMAIN, overlayId + "/" + this.handlerRef.recipeIndex));
 
 		List<Recipe.RecipeIngredient> results = this.recipe.getResults();
 		if (results != null && !results.isEmpty()) {
@@ -108,7 +118,8 @@ public class GuiTreeButton extends GuiRecipeButton {
 
 	@Override
 	public Map<String, String> handleHotkeys(int mousex, int mousey, Map<String, String> hotkeys) {
-		return shim.java.Map.of();
+		//return shim.java.Map.of(); // <-- this is immutable and causes a client crash
+        return hotkeys;
 	}
 
 	@Override

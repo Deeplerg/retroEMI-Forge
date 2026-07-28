@@ -1,6 +1,7 @@
 package dev.emi.emi.nemi;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import codechicken.nei.LayoutManager;
 import codechicken.nei.LayoutStyleMinecraft;
@@ -33,28 +34,30 @@ public class NemiPlugin implements EmiPlugin {
 	private static final int NEI_OUTER_MARGIN = 2;
 
     public static void onLoad() {
-        try {
-            Class<?> apiClass = Class.forName("codechicken.nei.api.API");
-            Method registerMethod = apiClass.getMethod("registerNEIGuiHandler",
-                Class.forName("codechicken.nei.api.INEIGuiHandler"));
-            Object handler = new NemiScreenHandler();
-            registerMethod.invoke(null, handler);
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			try {
+				Class<?> apiClass = Class.forName("codechicken.nei.api.API");
+				Method registerMethod = apiClass.getMethod("registerNEIGuiHandler",
+					Class.forName("codechicken.nei.api.INEIGuiHandler"));
+				Object handler = new NemiScreenHandler();
+				registerMethod.invoke(null, handler);
 
-		} catch (Exception e) {
-			EmiLog.error("Failed to register NEI GUI handler via reflection", e);
+			} catch (Exception e) {
+				EmiLog.error("Failed to register NEI GUI handler via reflection", e);
+			}
+			isNEILoaded = true;
 		}
-		isNEILoaded = true;
 	}
 
     @Override
     public void register(EmiRegistry registry) {
         if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
             registerExclusionArea(registry);
-        }
 
-		if (isNEILoaded) {
-			registerNeiRecipes(registry);
-		}
+            if (isNEILoaded) {
+                registerNeiRecipes(registry);
+            }
+        }
 	}
 
 	private void registerExclusionArea(EmiRegistry registry) {
@@ -83,8 +86,13 @@ public class NemiPlugin implements EmiPlugin {
 				harvester.harvest();
 
 				for (NemiRecipeCategory category : harvester.getCategories().values()) {
-					for (PositionedStack stack : RecipeCatalysts.getRecipeCatalysts(templateHandler)) {
-						registry.addWorkstation(category, EmiStack.of(stack.item));
+					List<PositionedStack> catalysts = RecipeCatalysts.getRecipeCatalysts(templateHandler);
+					if (catalysts != null) {
+						for (PositionedStack stack : catalysts) {
+							if (stack != null && stack.item != null) {
+								registry.addWorkstation(category, EmiStack.of(stack.item));
+							}
+						}
 					}
 				}
 			}
