@@ -11,6 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import com.rewindmc.retroemi.RetroEMICommonUtils;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.EmiApi;
 import dev.emi.emi.api.recipe.EmiRecipe;
@@ -35,7 +36,7 @@ public class BoM {
 
 	public static void setDefaults(RecipeDefaults defaults) {
 		BoM.defaults = defaults;
-		RetroEMI.executeOnMainThread(() -> reload());
+		RetroEMICommonUtils.executeOnMainThread(() -> reload());
 	}
 
 	public static JsonObject saveAdded() {

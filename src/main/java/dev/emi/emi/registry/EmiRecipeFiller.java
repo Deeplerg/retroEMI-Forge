@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import com.rewindmc.retroemi.RetroEMICommonUtils;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
@@ -156,7 +157,7 @@ public class EmiRecipeFiller {
 							ItemStack ss = s.getStack();
 							if (EmiStack.of(s.getStack()).isEqual(stack)) {
 								for (DiscoveredItem di : d) {
-									if (RetroEMI.canCombine(ss, di.stack)) {
+									if (RetroEMICommonUtils.canCombine(ss, di.stack)) {
 										di.amount += ss.stackSize;
 										continue slotLoop;
 									}
@@ -202,7 +203,7 @@ public class EmiRecipeFiller {
 						continue;
 					}
 					for (DiscoveredItem ui : unique) {
-						if (RetroEMI.canCombine(di.stack, ui.stack)) {
+						if (RetroEMICommonUtils.canCombine(di.stack, ui.stack)) {
 							ui.consumed += di.consumed;
 							continue outer;
 						}
@@ -247,7 +248,7 @@ public class EmiRecipeFiller {
 		List<ItemStack> stacks = Lists.newArrayList();
 		Slot output = handler.getOutputSlot((T)screen.inventorySlots);
 		if (output != null && !ItemStacks.isEmpty(output.getStack()) && recipe.getOutputs().size() > 0
-				&& !RetroEMI.canCombine(output.getStack(), recipe.getOutputs().get(0).getItemStack())) {
+				&& !RetroEMICommonUtils.canCombine(output.getStack(), recipe.getOutputs().get(0).getItemStack())) {
 			return 0;
 		}
 		for (Slot slot : handler.getCraftingSlots(recipe, (T)screen.inventorySlots)) {
@@ -325,7 +326,7 @@ public class EmiRecipeFiller {
 						continue;
 					}
 					ItemStack is = input.getStack().copy();
-					if (RetroEMI.canCombine(is, stack)) {
+					if (RetroEMICommonUtils.canCombine(is, stack)) {
 						manager.windowClick(screenHandler.windowId, input.slotNumber, 0, ClickType.PICKUP.ordinal(), player);
 						if (is.stackSize <= needed) {
 							needed -= is.stackSize;

@@ -1,6 +1,7 @@
 package dev.emi.emi.nemi;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import codechicken.nei.LayoutManager;
 import codechicken.nei.LayoutStyleMinecraft;
@@ -9,6 +10,8 @@ import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.ICraftingHandler;
 import codechicken.nei.recipe.RecipeCatalysts;
 import codechicken.nei.recipe.TemplateRecipeHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.stack.EmiStack;
@@ -17,7 +20,8 @@ import dev.emi.emi.runtime.EmiLog;
 import dev.emi.emi.screen.RecipeScreen;
 import net.minecraft.client.Minecraft;
 
-import static dev.emi.emi.nemi.NemiScreenHandler.*;
+import static dev.emi.emi.nemi.NemiScreenHandler.emiButton;
+import static dev.emi.emi.nemi.NemiScreenHandler.treeButton;
 
 public class NemiPlugin implements EmiPlugin {
 	public static final String DOMAIN = "nemi";
@@ -29,29 +33,31 @@ public class NemiPlugin implements EmiPlugin {
 	private static final int NEI_BUTTON_SPACING = 19;
 	private static final int NEI_OUTER_MARGIN = 2;
 
-	private static final Minecraft client = Minecraft.getMinecraft();
+    public static void onLoad() {
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			try {
+				Class<?> apiClass = Class.forName("codechicken.nei.api.API");
+				Method registerMethod = apiClass.getMethod("registerNEIGuiHandler",
+					Class.forName("codechicken.nei.api.INEIGuiHandler"));
+				Object handler = new NemiScreenHandler();
+				registerMethod.invoke(null, handler);
 
-	public static void onLoad() {
-		try {
-			Class<?> apiClass = Class.forName("codechicken.nei.api.API");
-			Method registerMethod = apiClass.getMethod("registerNEIGuiHandler",
-				Class.forName("codechicken.nei.api.INEIGuiHandler"));
-			Object handler = new NemiScreenHandler();
-			registerMethod.invoke(null, handler);
-
-		} catch (Exception e) {
-			EmiLog.error("Failed to register NEI GUI handler via reflection", e);
+			} catch (Exception e) {
+				EmiLog.error("Failed to register NEI GUI handler via reflection", e);
+			}
+			isNEILoaded = true;
 		}
-		isNEILoaded = true;
 	}
 
-	@Override
-	public void register(EmiRegistry registry) {
-		registerExclusionArea(registry);
+    @Override
+    public void register(EmiRegistry registry) {
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            registerExclusionArea(registry);
 
-		if (isNEILoaded) {
-			registerNeiRecipes(registry);
-		}
+            if (isNEILoaded) {
+                registerNeiRecipes(registry);
+            }
+        }
 	}
 
 	private void registerExclusionArea(EmiRegistry registry) {
@@ -60,13 +66,15 @@ public class NemiPlugin implements EmiPlugin {
 				return;
 			}
 
-			if (!(client.currentScreen instanceof RecipeScreen)) {
+			if (!(Minecraft.getMinecraft().currentScreen instanceof RecipeScreen)) {
 				int rows = (int) Math.ceil((double) layout.buttonCount / layout.numButtons);
 				int width = layout.numButtons * NEI_BUTTON_SPACING;
 				int height = rows * NEI_BUTTON_SPACING + NEI_OUTER_MARGIN;
 				consumer.accept(new Bounds(0, 0, width, height));
-				consumer.accept(new Bounds(emiButton.x, emiButton.y - 22, emiButton.getWidth(), emiButton.getHeight()));
-				consumer.accept(new Bounds(treeButton.x, treeButton.y - 22, treeButton.getWidth(), treeButton.getHeight()));
+				int emiButtonVerticalOffset = emiButton.getHeight() - NEI_OUTER_MARGIN;
+				int treeButtonVerticalOffset = treeButton.getHeight() - NEI_OUTER_MARGIN;
+				consumer.accept(new Bounds(emiButton.x, emiButton.y - emiButtonVerticalOffset, emiButton.getWidth(), emiButton.getHeight()));
+				consumer.accept(new Bounds(treeButton.x, treeButton.y - treeButtonVerticalOffset, treeButton.getWidth(), treeButton.getHeight()));
 			}
 		});
 	}
@@ -78,8 +86,13 @@ public class NemiPlugin implements EmiPlugin {
 				harvester.harvest();
 
 				for (NemiRecipeCategory category : harvester.getCategories().values()) {
-					for (PositionedStack stack : RecipeCatalysts.getRecipeCatalysts(templateHandler)) {
-						registry.addWorkstation(category, EmiStack.of(stack.item));
+					List<PositionedStack> catalysts = RecipeCatalysts.getRecipeCatalysts(templateHandler);
+					if (catalysts != null) {
+						for (PositionedStack stack : catalysts) {
+							if (stack != null && stack.item != null) {
+								registry.addWorkstation(category, EmiStack.of(stack.item));
+							}
+						}
 					}
 				}
 			}

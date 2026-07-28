@@ -5,6 +5,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.rewindmc.retroemi.RetroEMI;
+import com.rewindmc.retroemi.RetroEMICommonUtils;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.mixin.accessor.ItemBlockAccessor;
 import net.minecraft.block.Block;
@@ -134,7 +135,7 @@ public record TagKey<T>(ResourceLocation tag, Type type) {
 		String result = tag;
 		while (result.contains("/")) {
 			int nextChar = result.indexOf("/") + 1;
-			result = RetroEMI.replaceCharAt(result, nextChar, Character.toUpperCase(result.charAt(nextChar)));
+			result = RetroEMICommonUtils.replaceCharAt(result, nextChar, Character.toUpperCase(result.charAt(nextChar)));
 			result = result.replaceFirst("/", "");
 		}
 		return result;

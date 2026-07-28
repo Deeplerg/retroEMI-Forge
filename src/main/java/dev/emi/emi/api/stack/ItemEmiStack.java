@@ -38,7 +38,6 @@ import shim.net.minecraft.util.Formatting;
 
 @ApiStatus.Internal
 public class ItemEmiStack extends EmiStack implements Batchable {
-	private static final Minecraft client = Minecraft.getMinecraft();
 
 	private final Item item;
 	private final int subtype;

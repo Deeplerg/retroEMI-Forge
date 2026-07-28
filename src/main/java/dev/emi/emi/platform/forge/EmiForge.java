@@ -1,6 +1,7 @@
 package dev.emi.emi.platform.forge;
 
 import com.rewindmc.retroemi.RetroEMI;
+import com.rewindmc.retroemi.RetroEMICommonUtils;
 import cpw.mods.fml.common.FMLCommonHandler;
 import dev.emi.emi.nemi.NemiPlugin;
 import dev.emi.emi.network.EmiNetwork;
@@ -72,7 +73,7 @@ public class EmiForge {
 	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event) {
 		if (event.phase == TickEvent.Phase.START) {
-			RetroEMI.tick();
+			RetroEMICommonUtils.tick();
 		}
 	}
 }

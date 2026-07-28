@@ -1,6 +1,7 @@
 package dev.emi.emi.nemi;
 
 import codechicken.nei.recipe.GuiRecipeTab;
+import codechicken.nei.recipe.HandlerInfo;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.EmiRegistry;
@@ -125,13 +126,14 @@ public class RecipeHarvester {
     }
 
     private EmiStack determineCategoryIcon(TemplateRecipeHandler handler) {
-        // TODO Couldn't make Image to Stack
-        EmiStack icon = EmiStack.of(GuiRecipeTab.getHandlerInfo(handler).getItemStack());
-
-        if (!icon.isEmpty()) {
-            return icon;
-        }
-
+		HandlerInfo info = GuiRecipeTab.getHandlerInfo(handler);
+		if (info != null && info.getItemStack() != null) {
+			// TODO Couldn't make Image to Stack
+			EmiStack icon = EmiStack.of(info.getItemStack());
+			if (!icon.isEmpty()) {
+				return icon;
+			}
+		}
         return DEFAULT_ICON;
     }
 }
