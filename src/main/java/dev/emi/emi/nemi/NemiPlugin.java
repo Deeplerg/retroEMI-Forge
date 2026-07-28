@@ -19,7 +19,8 @@ import dev.emi.emi.runtime.EmiLog;
 import dev.emi.emi.screen.RecipeScreen;
 import net.minecraft.client.Minecraft;
 
-import static dev.emi.emi.nemi.NemiScreenHandler.*;
+import static dev.emi.emi.nemi.NemiScreenHandler.emiButton;
+import static dev.emi.emi.nemi.NemiScreenHandler.treeButton;
 
 public class NemiPlugin implements EmiPlugin {
 	public static final String DOMAIN = "nemi";
