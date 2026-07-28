@@ -1,5 +1,7 @@
 package dev.emi.emi.nemi;
 
+import codechicken.nei.recipe.GuiRecipeTab;
+import codechicken.nei.recipe.HandlerInfo;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.EmiRegistry;
@@ -8,8 +10,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class RecipeHarvester {
@@ -21,11 +25,11 @@ public class RecipeHarvester {
         "codechicken.nei.recipe.BrewingRecipeHandler"
     );
 
-    private static final CategoryIconGuesser ICON_GUESSER = new CategoryIconGuesser();
     private static final EmiStack DEFAULT_ICON = EmiStack.of(Blocks.crafting_table);
 
     private final EmiRegistry registry;
     private final TemplateRecipeHandler baseHandler;
+    private final Map<String, NemiRecipeCategory> categories = new HashMap<>();
 
     public RecipeHarvester(EmiRegistry registry, TemplateRecipeHandler baseHandler) {
         this.registry = registry;
@@ -47,7 +51,7 @@ public class RecipeHarvester {
         }
     }
 
-    private Set<String> extractRecipeIds() {
+    public Set<String> extractRecipeIds() {
         Set<String> ids = new HashSet<>();
 
         String overlayId = baseHandler.getOverlayIdentifier();
@@ -96,13 +100,21 @@ public class RecipeHarvester {
         registerAllRecipes(category, handler, numRecipes, recipeId);
     }
 
-    private NemiRecipeCategory createCategory(TemplateRecipeHandler handler, String recipeId) {
+    public NemiRecipeCategory createCategory(TemplateRecipeHandler handler, String recipeId) {
+        if (categories.containsKey(recipeId)) {
+            return categories.get(recipeId);
+        }
         ResourceLocation categoryId = EmiPort.id(NemiPlugin.DOMAIN, recipeId);
         EmiStack icon = determineCategoryIcon(handler);
 
         NemiRecipeCategory category = new NemiRecipeCategory(categoryId, icon, handler.getRecipeName());
         registry.addCategory(category);
+        categories.put(recipeId, category);
         return category;
+    }
+
+    public Map<String, NemiRecipeCategory> getCategories() {
+        return categories;
     }
 
     private void registerAllRecipes(NemiRecipeCategory category, TemplateRecipeHandler handler, int numRecipes, String recipeId) {
@@ -114,16 +126,14 @@ public class RecipeHarvester {
     }
 
     private EmiStack determineCategoryIcon(TemplateRecipeHandler handler) {
-        // TODO I couldn't find a better way to handle this.
-        // This is dirty AF. But it works, somewhat.
-        // This is probably better than just a default icon everywhere.
-        // Modpack devs can override this in category_properties.json.
-        EmiStack guessedIcon = ICON_GUESSER.guessIcon(handler.getRecipeName());
-
-        if (!guessedIcon.isEmpty()) {
-            return guessedIcon;
-        }
-
+		HandlerInfo info = GuiRecipeTab.getHandlerInfo(handler);
+		if (info != null && info.getItemStack() != null) {
+			// TODO Couldn't make Image to Stack
+			EmiStack icon = EmiStack.of(info.getItemStack());
+			if (!icon.isEmpty()) {
+				return icon;
+			}
+		}
         return DEFAULT_ICON;
     }
 }

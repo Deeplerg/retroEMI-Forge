@@ -79,8 +79,8 @@ public class REMIScreen extends GuiScreen implements ParentElement {
 	public void handleMouseInput() {
 		super.handleMouseInput();
 		if (Mouse.getEventDWheel() != 0) {
-            double factor = 1D;
-            if (!EmiAgnos.isModLoaded("lwjgl3ify")) factor = 120D;
+			double factor = 1D;
+			if (!EmiAgnos.isModLoaded("lwjgl3ify")) factor = 120D;
 			mouseScrolled(lastMouseX, lastMouseY, Mouse.getEventDWheel() / factor);
 		}
 	}
