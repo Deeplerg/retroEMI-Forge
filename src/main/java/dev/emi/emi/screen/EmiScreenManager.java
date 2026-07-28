@@ -31,7 +31,6 @@ import dev.emi.emi.bom.BoM;
 import dev.emi.emi.chess.EmiChess;
 import dev.emi.emi.config.EmiConfig;
 import dev.emi.emi.config.HeaderType;
-import dev.emi.emi.config.HelpLevel;
 import dev.emi.emi.config.Margins;
 import dev.emi.emi.config.ScreenAlign;
 import dev.emi.emi.config.ScreenAlign.Horizontal;

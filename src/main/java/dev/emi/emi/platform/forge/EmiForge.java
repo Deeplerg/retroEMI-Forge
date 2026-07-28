@@ -33,9 +33,7 @@ public class EmiForge {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		if (EmiAgnos.isModLoaded("NotEnoughItems")) {
-			NemiPlugin.onLoad();
-		}
+
 	}
 
 	@Mod.EventHandler
@@ -55,7 +53,9 @@ public class EmiForge {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-
+		if (EmiAgnos.isModLoaded("NotEnoughItems")) {
+			NemiPlugin.onLoad();
+		}
 	}
 
 	@Mod.EventHandler
